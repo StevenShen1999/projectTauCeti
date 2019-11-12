@@ -36,6 +36,26 @@ def main():
     '''
     util.createTable(conn, createSubmittedSQL)
 
+    createChatSQL = '''
+        CREATE TABLE IF NOT EXISTS messages (
+            messageID integer primary key autoincrement,
+            course text not null referenes course(courseCode),
+            sender text not null references users(studentID),
+            timeSent datetime not null,
+            message text not null
+        )
+    '''
+    util.createTable(conn, createChatSQL)
+
+    createCourseSQL = '''
+        CREATE TABLE IF NOT EXISTS course (
+            courseCode text not null primary key,
+            courseName text not null,
+            description text
+        );
+    '''
+    util.createTable(conn, createCourseSQL)
+
 
 if __name__ == '__main__':
     main()

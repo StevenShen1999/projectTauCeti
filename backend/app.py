@@ -3,17 +3,18 @@ from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import jwt
 from functools import wraps
-from utilFunc import key
 import utilFunc
 import utilFuncNotes 
 from json import dumps, load
 import os
+import re
 
 app = Flask(__name__)
 UPLOAD_FOLDER = '../database'
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'png', 'docx', 'jpeg', 'txt'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+app.config['JWT_SECRET_KEY'] = os.urandom(24)
 
 CORS(app)
 
@@ -24,18 +25,18 @@ def allowed_files(filename):
 def authorised(f):
     @wraps(f)
     def decorated_function(*args, **kws):
-        if not 'Authorization' in request.headers:
+        if request.headers['Authorization'] == None:
             payload = {'response': 401, 'msg': "Not logged in"}
             return dumps(payload)
 
         user = None
-        data = request.headers['Authorization'].encode('ascii','ignore') 
+        data = request.headers['Authorization'].encode('UTF-8', 'ignore')
         token = str.replace(str(data), 'Bearer ', '')
-        try:
-            user = jwt.decode(token, key, algorithms=['HS256'])['sub']
+
+        try:   
+            user = jwt.decode(token, utilFunc.key, algorithms=['HS256'])['sub']
         except:
-            payload = {'response': 401, 'msg': "Not logged in"}
-            return dumps(payload)
+            return dumps({'response': 400, 'msg': 'Token failed'}), 400
         return f(user, *args, **kws)
     return decorated_function
 
@@ -101,13 +102,13 @@ def login():
 
     error = utilFunc.login(userID, password)
     payload = {}
-    if (isinstance(error, str)):
+    if (error == "user does not exist" or error == "Password incorrect"):
         payload['response'] = 403
-        payload['msg'] = error
+        payload['msg'] = error.decode('utf-8')
         return dumps(payload), 403
     else:
         payload['response'] = 200
-        payload['msg'] = error
+        payload['msg'] = error.decode('utf-8')
         return dumps(payload), 200
 
 '''
@@ -143,9 +144,11 @@ def logout(user):
     data = request.get_json()
     userID = data['userID']
 
+    if (user != userID):
+        return dumps({'resposne': 405, 'msg': "Not using the right token"}), 405
     output = utilFunc.logout(userID)
     payload = {}
-    if (payload != "success"):
+    if (output != "success"):
         payload['response'] = 405
         payload['msg'] = output
         return dumps(payload), 405
