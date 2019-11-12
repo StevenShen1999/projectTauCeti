@@ -20,7 +20,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .container {
-    margin: 0 20px;
+    padding: 0 20px;
 }
 .about {
     & img {

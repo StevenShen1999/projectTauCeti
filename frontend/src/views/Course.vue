@@ -1,28 +1,37 @@
 <template>
-    <div class="wrapper"> 
-        <div class="left"><Nav/> </div>   
+    <div class="course-wrapper"> 
+    <NavBar/>
+    <div class="course-container">
         <div class="main">
             <div class="files"><CourseHome /></div>   
             <div class="chat"><Chat /> </div>   
         </div>
     </div>
+    </div>
 </template>
 <script>
-import Nav from '@/components/Nav.vue'
+import NavBar from '@/components/NavBar.vue'
 import CourseHome from '@/components/CourseHome.vue'
 import Chat from '@/components/Chat.vue'
 export default {
     name: "course",
     props: ["cid"],
-    components: {Nav,CourseHome, Chat}
+    components: {NavBar,CourseHome, Chat}
 }
 </script>
 <style lang='scss' scoped>
-.wrapper {
+.course-wrapper {
     position: absolute;
     height: 100%;
     width: 100%;
-    display: flex; 
+    display: flex;
+    flex-direction: column;
+    justify-items: stretch;
+}
+.course-container {
+    position: relative;
+    height: 100%;
+    display: flex;
 }
 .left {
     flex-grow: 0;
@@ -39,6 +48,7 @@ export default {
 }
 .files {
     overflow: scroll;
+    overflow-x: hidden;
     height: 100%;
     flex: 4 1 0;
     position: relative;
@@ -46,6 +56,7 @@ export default {
 }
 .chat {
     overflow: scroll;
+    overflow-x: hidden;
     flex: 2 1 0;
     height: 100%;
     position: relative;

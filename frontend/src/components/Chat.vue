@@ -1,9 +1,15 @@
 <template>
     <div class="wrapper">
         <div class="header" >
+            <h2>
+            Chat for COMP1511
+            </h2>
         </div>
         <div class="messages">
-            <p :class="index % 2 ? 'left' : 'right'" v-for="(message, index) in messages" :key="index">{{message}}</p>
+            <p :class="index % 2 ? 'left' : 'right'" v-for="(message, index) in messages" :key="index">
+                <b>{{message.user}}</b>: 
+                {{message.message}}
+            </p>
         </div>
         <div class="input">
             <form @submit="sendMessage">
@@ -17,8 +23,15 @@
 export default {
     data: () => ({
         messages: [
-            "If you have one bucket that contains 2 gallons and another bucket that contains 7 gallons, how many buckets do you have?",
-            "Stfu"
+            { 
+                message: "If you have one bucket that contains 2 gallons and another bucket that contains 7 gallons, how many buckets do you have?",
+                user: "me"
+            },
+
+            { 
+                message: "stfu",
+                user: "u"
+            },
         ], 
         messageEntered: ''
     }),
@@ -35,14 +48,23 @@ export default {
 .wrapper {
     display: flex;
     width: 100%;
+    height: 100%;
     position: relative;
     flex-direction: column;
     align-items: stretch;
 }
 .header {
-    background-color: black;
-    height: 7vh;
+    background-color: #FAFFD1;
+    height: 50px;
     flex-grow: 0;
+    text-align: center;
+    position: relative;
+    & h2 {
+        position: absolute;
+        width: 100%;
+        bottom: 10px;
+        margin: 0;
+    }
 }
 .messages {
     flex-grow: 1;
@@ -50,43 +72,10 @@ export default {
     display: flex;
     flex-direction: column;
 }
-.left {
-    margin-left: 10px;
-}
-.right {
-    margin-right: 10px;
-}
 p {
-    flex-grow: 0;
-	// layout
-	position: relative;
-	
-	// looks
-	background-color: #fff;
-	padding: 1.125em 1.5em;
-	border-radius: 1rem;
-  box-shadow:	0 0.125rem 0.5rem rgba(0, 0, 0, .3), 0 0.0625rem 0.125rem rgba(0, 0, 0, .2);
-}
-
-.right::before, .left::before {
-	// layout
-	content: '';
-	position: absolute;
-	width: 0;
-	height: 0;
-	top: 100%;
-	border: .75rem solid transparent;
-	border-bottom: none;
-
-	// looks
-	border-top-color: #fff;
-	filter: drop-shadow(0 0.0625rem 0.0625rem rgba(0, 0, 0, .1));
-}
-.left::before {
-	left: 1.5em; // offset should move with padding of parent
-}
-.right::before {
-    right: 1.5em;
+    margin: 5px;
+    margin-left: 1rem;
+    font-size: .8rem;
 }
 .input {
     position: relative;
@@ -97,6 +86,7 @@ p {
         width: 100%;
         padding: 1em 1.5em;
         border: none;
+        background-color: #eee;
     }
 }
 

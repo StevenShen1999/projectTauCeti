@@ -1,9 +1,12 @@
 <template>
   <div class="wrapper">
+    <div class="login"> 
+          <router-link class="primary" to="/login">Log in</router-link>
+      </div>
   <div class="home">
     <h1 class="title">Dark Notes</h1>
     <p class="subtitle"> Welcome to the darkest dark notes </p>
-    <input type="text" name="search" class="search" />
+    <input type="text" name="search" class="search" placeholder="Search your course here"/>
   </div>
   </div>
 </template>
@@ -14,7 +17,7 @@ export default {
   name: 'home',
 }
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .home {
   position: absolute;
   top:50%;
@@ -28,6 +31,17 @@ export default {
   flex-direction: column; 
   width: 50%;
 }
+.login {
+  position: absolute;
+  top: 10px ;
+  right: 10px;
+    & a {
+        color: black;
+        margin-left: 5px;
+        font-size: 1.2rem;
+        padding: 2px 10px;
+    }
+}
 .title {
   color: #f35626;
   font-size: 5rem;
@@ -38,8 +52,16 @@ export default {
   animation: hue 60s infinite linear; 
   margin: 0;
 }
-.subtitle {
-
+.search {
+    margin: auto 0;
+    width: 100%;
+    border-radius: 30px;
+    background-color: #eee;
+    border: none;
+    padding: 12px 15px;
+    margin: 8px 0;
+    width: 100%;
+    width: 100%;
 }
 @keyframes hue {
   0% {
