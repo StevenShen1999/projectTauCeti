@@ -12,7 +12,7 @@ def main():
             dateLogged date not null,
             nvotes integer not null,
             rating double not null
-        )
+        );
     '''
     conn = util.create_connection()
     util.createTable(conn, createNotesSQL)
@@ -23,7 +23,7 @@ def main():
             password text not null,
             token text,
             primary key (studentID)
-        )
+        );
     '''
     util.createTable(conn, createUsersSQL)
 
@@ -31,8 +31,8 @@ def main():
         CREATE TABLE IF NOT EXISTS submittion (
             uploader text not null references users(studentID),
             notesID integer not null references notes(notesID),
-            primary key (uploader, notes)
-        )
+            primary key (uploader, notesID)
+        );
     '''
     util.createTable(conn, createSubmittedSQL)
 
