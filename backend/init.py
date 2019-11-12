@@ -1,4 +1,5 @@
 import sqlite3
+import re
 from sqlite3 import Error
 import utilFunc as util
 
@@ -56,6 +57,18 @@ def main():
     '''
     util.createTable(conn, createCourseSQL)
 
+    courseList = open('./courseList.json', 'rb')
+    courseListLines = courseList.readlines()
+    for line in courseListLines:
+        #print(line)
+        courseCodes = re.search('[A-Z]{4}[0-9]{4}', str(line))
+        courseNames = re.search(' ([A-Za-z &]+)', str(line))
+
+        conn = util.create_connection()
+        curs = conn.cursor()
+        curs.execute("insert into course (courseCode, courseName) values (?, ?)", (courseCodes.group(), courseNames[1]))
+        conn.commit()
+    
 
 if __name__ == '__main__':
     main()

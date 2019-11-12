@@ -1,3 +1,4 @@
+import utilFuncCourses
 from flask import request, Flask, send_file, make_response, abort, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -207,6 +208,27 @@ def deleteMessage():
         return dumps({'response': '200', 'msg': 'success'}), 200
     else:
         return dumps({'response': '400', 'msg': 'message doesnt exist'}), 400
+
+'''
+    App-route for insert description to a particular course
+    :param: {'description': '', 'courseID': ''}
+    :output: {'response': '', 'msg': ''}
+'''
+@app.route("/api/addDescription", methods=['POST'])
+def insertDescripiton():
+    data = request.get_json()
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    courseID = data['courseID']
+    description = data['description']
+    if (courseID == None or description == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    output = utilFuncCourses.insertDescription(description, courseID)
+    if (output == 'success'):
+        return dumps({'response': '200', 'msg': 'success'}), 200
+    else:
+        return dumps({'response': '400', 'msg': 'course doesnt exist'}), 400
+
 
 if __name__ == '__main__':
     app.run()
