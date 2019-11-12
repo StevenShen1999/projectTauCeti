@@ -4,7 +4,6 @@ import jwt
 import hashlib, binascii
 import os
 import datetime
-from flask_jwt_extended import (create_access_token, jwt_required)
 
 key = os.urandom(24)
 
@@ -107,7 +106,7 @@ def checkUserExists(userID):
 def main():
     create_connection()
     # print(checkUserExists("z5161616"))
-    # createUser("z5161616", "990928ss")
+    createUser("z5161616", "990928ss")
     # print(checkUserExists("z5161616"))
     login("z5161616", "990928ss")
 

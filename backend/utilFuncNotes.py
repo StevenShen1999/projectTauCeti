@@ -25,7 +25,7 @@ def getFileName(fileID):
 
 def main():
     saveFile(r"/mnt/c/Users/Steve\ Shen/COMP/project/tauCeti/database/test0.txt", "COMP9444", "Cool notes brah", "z5161616")
-    print(getFileName(3))
+    # print(getFileName(3))
 
 if __name__ == '__main__':
     main()

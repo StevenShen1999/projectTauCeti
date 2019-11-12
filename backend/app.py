@@ -105,13 +105,9 @@ def login():
     error = utilFunc.login(userID, password)
     payload = {}
     if (error == "user does not exist" or error == "Password incorrect"):
-        payload['response'] = 403
-        payload['msg'] = error.decode('utf-8')
-        return dumps(payload), 403
+        return dumps({'response': 403, 'msg': 'Username/Password incorrect'}), 403
     else:
-        payload['response'] = 200
-        payload['msg'] = error.decode('utf-8')
-        return dumps(payload), 200
+        return dumps({'response': 200, 'msg': error.decode('utf-8')}), 200
 
 '''
     App-route for registering a user
@@ -181,6 +177,7 @@ def addMessage():
     App-route for polling all messages
     :param: course
     :output: {'response': '', 'msg': ''} on success, returns a json-array containing all of the message
+    With format {'messageID': '', 'courseCode': '', 'timeSent': '', 'message': ''}
     related to the course
 '''
 @app.route("/api/getChat", methods=['GET'])
@@ -188,9 +185,12 @@ def getMessages():
     data = request.args.get('course')
     if (data == None):
         return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
-    return dumps(utilFuncChat.getChat(data)), 200
+    result = []
+    for i, line in enumerate(utilFuncChat.getChat(data)):
+        result.append({'messageID': line[0], 'courseCode': line[1], 'timeSent': line[2], 'message': line[3]})
 
-    return 1
+    return dumps(result), 200
+
 
 '''
     App-route for deleting a message
