@@ -57,11 +57,18 @@ def login(userID, password):
             token = createToken(userID)
             curs.execute("update users set token=? where studentid=?", (token, userID,))
             conn.commit()
-            return token
+            return token.hex()
 
 def logout(userID):
-    # TODO:
-    print(1)
+    userInfo = checkUserExists(userID)
+    if (userInfo == False):
+        return "User does not exist"
+
+    conn = create_connection()
+    curs = conn.cursor()
+    curs.execute("update users set token=None where studentid=?", (userID))
+    conn.commit()
+    return "success"
 
 def hashPassword(password):
     return hashlib.sha512(password.encode()).hexdigest()
@@ -71,19 +78,16 @@ def verifyPassword(passwordGiven, passwordExists):
     return pwdhash == passwordExists
 
 def createToken(userID):
-    try:
-        payload = {
-            'iat': datetime.datetime.utcnow(),
-            'sub': userID
-        }
+    payload = {
+        'iat': datetime.datetime.utcnow(),
+        'sub': userID
+    }
 
-        return jwt.encode(
-            payload,
-            key,
-            algorithm='HS256'
-        )
-    except Exception as e:
-        return e
+    return jwt.encode(
+        payload,
+        key,
+        algorithm='HS256'
+    )
 
 def verifyToken(token):
     try:

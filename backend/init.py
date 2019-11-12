@@ -10,7 +10,8 @@ def main():
             name text not null,
             filePath text not null,
             dateLogged date not null,
-            nvotes integer not null
+            nvotes integer not null,
+            rating double not null,
         )
     '''
     conn = util.create_connection()
