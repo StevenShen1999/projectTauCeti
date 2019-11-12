@@ -11,7 +11,7 @@ def main():
             filePath text not null,
             dateLogged date not null,
             nvotes integer not null,
-            rating double not null,
+            rating double not null
         )
     '''
     conn = util.create_connection()
@@ -30,7 +30,7 @@ def main():
     createSubmittedSQL = '''
         CREATE TABLE IF NOT EXISTS submittion (
             uploader text not null references users(studentID),
-            notes integer not null references notes(notesID),
+            notesID integer not null references notes(notesID),
             primary key (uploader, notes)
         )
     '''

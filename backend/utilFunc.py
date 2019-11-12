@@ -29,8 +29,6 @@ def runQuery(conn, sql, arg):
     except Error as e:
         print(e)
 
-# def insertNotes(conn, file):
-
 def createUser(userID, password):
     if (checkUserExists(userID) == True):
         return "user already exists"
