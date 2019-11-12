@@ -39,7 +39,7 @@ def main():
     createChatSQL = '''
         CREATE TABLE IF NOT EXISTS messages (
             messageID integer primary key autoincrement,
-            course text not null referenes course(courseCode),
+            course text not null references course(courseCode),
             sender text not null references users(studentID),
             timeSent datetime not null,
             message text not null

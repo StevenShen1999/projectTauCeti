@@ -5,6 +5,7 @@ import jwt
 from functools import wraps
 import utilFunc
 import utilFuncNotes 
+import utilFuncChat
 from json import dumps, load
 import os
 import re
@@ -156,6 +157,56 @@ def logout(user):
         payload['response'] = 200
         payload['msg'] = output
         return dumps(payload), 200
+
+'''
+    App-route for sending a message
+    :param: {'userID': '', 'course': '', 'message': ''}
+    :output: {'response': '', 'msg': ''}
+'''
+@app.route("/api/addChat", methods=['POST'])
+def addMessage():
+    data = request.get_json()
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    userID = data['userID']
+    course = data['course']
+    message = data['message']
+    if (userID == None or course == None or message == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    messageID = utilFuncChat.insertChat(message, course, userID)
+    return dumps({'response': 200, 'msg': messageID}), 200
+
+'''
+    App-route for polling all messages
+    :param: course
+    :output: {'response': '', 'msg': ''} on success, returns a json-array containing all of the message
+    related to the course
+'''
+@app.route("/api/getChat", methods=['GET'])
+def getMessages():
+    data = request.args.get('course')
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    return dumps(utilFuncChat.getChat(data)), 200
+
+    return 1
+
+'''
+    App-route for deleting a message
+    :param: {'messageID': ''}
+    :output: {'response': '', 'msg': ''}
+'''
+@app.route("/api/deleteChat", methods=['POST'])
+def deleteMessage():
+    data = request.get_json()
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    messageID = data['messageID']
+    output = utilFuncChat.removeChat(messageID)
+    if (output == 'success'):
+        return dumps({'response': '200', 'msg': 'success'}), 200
+    else:
+        return dumps({'response': '400', 'msg': 'message doesnt exist'}), 400
 
 if __name__ == '__main__':
     app.run()
