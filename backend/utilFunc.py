@@ -6,7 +6,7 @@ import hashlib, binascii
 import os
 import datetime
 
-key = "j34g1k2j5g1345hkj34g52bc4gh3f*!@^#&(())"
+key = os.urandom(32).decode('utf-8', 'replace')
 
 def create_connection():
     conn = None

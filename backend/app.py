@@ -23,6 +23,13 @@ CORS(app)
 def allowed_files(filename):
     return True if filename.rsplit(".")[-1] in ALLOWED_EXTENSIONS else False
 
+'''
+    README: 
+    JWTs need to be passed in to the APIs in their headers, with the format
+    'Authorization': 'whateverJWT'
+    and then whatever else is needed
+'''
+
 # Our authorised function will determine if user has logged in with valid credentials
 def authorised(f):
     @wraps(f)
@@ -33,12 +40,8 @@ def authorised(f):
 
         user = None
         token = request.headers['Authorization'].encode('UTF-8', 'ignore')
-        # token = str.replace(str(data), 'Bearer ', '')
-        # token.encode('utf-8')
         token = token.decode("utf-8")
 
-        #print(token)
-        #print(jwt.decode(token, utilFunc.key, algorithms=['HS256'])['sub'])
         try:   
             user = jwt.decode(token, utilFunc.key, algorithms=['HS256'])['sub']
         except:
@@ -239,8 +242,46 @@ def insertDescripiton():
     else:
         return dumps({'response': '400', 'msg': 'course doesnt exist'}), 400
 
-# TODO: Update votes, get votes, get a ladder board of top voted notes, get a course dump, get a specific course information
+# TODO: Get a ladder board of top voted notes, get a course dump, get a specific course information
 # TODO: Get all messages sent within that course
+
+'''
+    App-route for upvoting a particular note
+    :param: {'fileID': ''}
+    :output: {'reponse': '', 'msg': ''}, on success returns 200, 404 otherwise
+'''
+@app.route("/api/upvote", methods=['POST'])
+@authorised
+def upvote():
+    data = request.get_json()
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    fileID = data['fileID']
+    if (fileID == None):
+        return dumps({'response': 400, 'msg': 'No file provided'}), 400
+    output = utilFuncNotes.upvote(fileID)
+    if (output == 'success'):
+        return dumps({'response': 404, 'msg': output}), 404
+    else:
+        return dumps({'response': 200, 'msg': output}), 200
+
+'''
+    App-route for requesting the amount of upvotes a particular note has
+    :param: in args, a field with 'notesID'
+    :output: {'response': '', 'msg': ''}, on success return 200, 404 otherwise
+'''
+@app.route("/api/getVotes", methods=['GET'])
+@authorised
+def getVotes():
+    data = request.args.get('notesID')
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    output = utilFuncNotes.getVotes(data)
+    if (isinstance(output) == str):
+        return dumps({'response': 404, 'msg': output}), 404
+    else:
+        return dumps({'response': 200, 'msg': output}), 200
+
 
 if __name__ == '__main__':
     app.run()

@@ -16,16 +16,45 @@ def saveFile(fileIn, course, name, userID):
     return (id[0])
 
 def getFileName(fileID):
-    conn = util.create_connection()
-    curs = conn.cursor()
-    curs.execute("select * from notes where notesid=?", (int(fileID),))
-    conn.commit()
-    filePath = curs.fetchone()
+    filePath = checkFileExist(int(fileID))
+    if (filePath == None):
+        return "failed, no such file exists"
     return filePath[3]
 
+def upvote(fileID):
+    if (checkFileExist(fileID) == None):
+        return "failed, no such file exists"
+    conn = util.create_connection()
+    curs = conn.cursor()
+    curs.execute("select nvotes from notes where notesid=?", (int(fileID),))
+    conn.commit()
+    currentUpvotes = curs.fetchone()[0]
+    curs.execute("update notes set nvotes=? where notesid=?", (currentUpvotes + 1, int(fileID),))
+    conn.commit()
+    return "success"
+
+def getVotes(fileID):
+    if (checkFileExist(int(fileID)) == None):
+        return "failed, no such file exists"
+    conn = util.create_connection()
+    curs = conn.cursor()
+    curs.execute("select nvotes from notes where notesid=?", (int(fileID), ))
+    conn.commit()
+    return curs.fetchone()[0]
+
+def checkFileExist(fileID):
+    conn = util.create_connection()
+    curs = conn.cursor()
+    curs.execute("select * from notes where notesid=?", (fileID,))
+    conn.commit()
+    return curs.fetchone()
+
 def main():
-    saveFile(r"/mnt/c/Users/Steve\ Shen/COMP/project/tauCeti/database/test0.txt", "COMP9444", "Cool notes brah", "z5161616")
+    # saveFile(r"/mnt/c/Users/Steve\ Shen/COMP/project/tauCeti/database/test0.txt", "COMP9444", "Cool notes brah", "z5161616")
     # print(getFileName(3))
+    checkFileExist(3)
+    upvote(3)
+    print(getVotes(3))
 
 if __name__ == '__main__':
     main()
