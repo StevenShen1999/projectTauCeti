@@ -1,11 +1,12 @@
 import sqlite3
+import base64
 from sqlite3 import Error
 import jwt
 import hashlib, binascii
 import os
 import datetime
 
-key = os.urandom(24)
+key = "j34g1k2j5g1345hkj34g52bc4gh3f*!@^#&(())"
 
 def create_connection():
     conn = None
@@ -53,6 +54,8 @@ def login(userID, password):
             return "Password incorrect"
         else:
             token = createToken(userID)
+            print(token)
+            print(jwt.decode(token, key, algorithms=['HS256']))
             curs.execute("update users set token=? where studentid=?", (token, userID,))
             conn.commit()
             return token
@@ -64,7 +67,7 @@ def logout(userID):
 
     conn = create_connection()
     curs = conn.cursor()
-    curs.execute("update users set token=None where studentid=?", (userID))
+    curs.execute("update users set token=? where studentid=?", (None, userID,))
     conn.commit()
     return "success"
 
@@ -81,11 +84,7 @@ def createToken(userID):
         'sub': userID
     }
 
-    return jwt.encode(
-        payload,
-        key,
-        algorithm='HS256'
-    )
+    return jwt.encode(payload, key, 'HS256').decode('utf-8')
 
 def verifyToken(token):
     try:

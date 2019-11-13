@@ -32,9 +32,13 @@ def authorised(f):
             return dumps(payload)
 
         user = None
-        data = request.headers['Authorization'].encode('UTF-8', 'ignore')
-        token = str.replace(str(data), 'Bearer ', '')
+        token = request.headers['Authorization'].encode('UTF-8', 'ignore')
+        # token = str.replace(str(data), 'Bearer ', '')
+        # token.encode('utf-8')
+        token = token.decode("utf-8")
 
+        #print(token)
+        #print(jwt.decode(token, utilFunc.key, algorithms=['HS256'])['sub'])
         try:   
             user = jwt.decode(token, utilFunc.key, algorithms=['HS256'])['sub']
         except:
@@ -53,6 +57,7 @@ def authorised(f):
     :output: {response: "", msg: ""}
 '''
 @app.route("/api/uploadFile", methods=['POST'])
+@authorised
 def uploadFile():
     if ('file' not in request.files):
         return dumps({'response': 400, "msg": "No file included"}), 400
@@ -82,6 +87,7 @@ def uploadFile():
     :output: {response: "", msg: ""} or just a file
 '''
 @app.route("/api/downloadFile", methods=['GET'])
+@authorised
 def getFile():
     fileID = request.args.get('fileID')
     if (fileID == None):
@@ -107,7 +113,7 @@ def login():
     if (error == "user does not exist" or error == "Password incorrect"):
         return dumps({'response': 403, 'msg': 'Username/Password incorrect'}), 403
     else:
-        return dumps({'response': 200, 'msg': error.decode('utf-8')}), 200
+        return dumps({'response': 200, 'msg': error}), 200
 
 '''
     App-route for registering a user
@@ -139,6 +145,7 @@ def register():
 @app.route("/api/logout", methods=['GET'])
 @authorised
 def logout(user):
+    #print("Got here")
     data = request.get_json()
     userID = data['userID']
 
@@ -161,6 +168,7 @@ def logout(user):
     :output: {'response': '', 'msg': ''}
 '''
 @app.route("/api/addChat", methods=['POST'])
+@authorised
 def addMessage():
     data = request.get_json()
     if (data == None):
@@ -181,6 +189,7 @@ def addMessage():
     related to the course
 '''
 @app.route("/api/getChat", methods=['GET'])
+@authorised
 def getMessages():
     data = request.args.get('course')
     if (data == None):
@@ -191,13 +200,13 @@ def getMessages():
 
     return dumps(result), 200
 
-
 '''
     App-route for deleting a message
     :param: {'messageID': ''}
     :output: {'response': '', 'msg': ''}
 '''
 @app.route("/api/deleteChat", methods=['POST'])
+@authorised
 def deleteMessage():
     data = request.get_json()
     if (data == None):
@@ -215,6 +224,7 @@ def deleteMessage():
     :output: {'response': '', 'msg': ''}
 '''
 @app.route("/api/addDescription", methods=['POST'])
+@authorised
 def insertDescripiton():
     data = request.get_json()
     if (data == None):
@@ -229,6 +239,8 @@ def insertDescripiton():
     else:
         return dumps({'response': '400', 'msg': 'course doesnt exist'}), 400
 
+# TODO: Update votes, get votes, get a ladder board of top voted notes, get a course dump, get a specific course information
+# TODO: Get all messages sent within that course
 
 if __name__ == '__main__':
     app.run()

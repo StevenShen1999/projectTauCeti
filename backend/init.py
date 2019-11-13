@@ -18,6 +18,7 @@ def main():
     conn = util.create_connection()
     util.createTable(conn, createNotesSQL)
 
+    # FIXME: Potentially, we can add a last sign-in field here to faciliate future JWT session token implementations
     createUsersSQL = '''
         CREATE TABLE IF NOT EXISTS users (
             studentID text not null,
