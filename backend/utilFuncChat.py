@@ -41,7 +41,7 @@ def checkMessage(messageID):
 def main():
     insertChat("lel, Yang lmao", "COMP9444", "z5161616")
     insertChat("WHATEVER la", "COMP9444", "z5161616")
-    print(getChat("COMP9444"))
+    # print(getChat("COMP9444"))
 
 if __name__ == '__main__':
     main()

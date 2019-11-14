@@ -7,6 +7,7 @@ def main():
     createNotesSQL = '''
         CREATE TABLE IF NOT EXISTS notes (
             notesID integer primary key autoincrement,
+            uploader text not null references users(studentID),
             course text not null,
             name text not null,
             filePath text not null,
@@ -29,6 +30,7 @@ def main():
     '''
     util.createTable(conn, createUsersSQL)
 
+    """ DEPRECATED, MOVED THE UPLOADER COLUMN INTO THE NOTES TABLE
     createSubmittedSQL = '''
         CREATE TABLE IF NOT EXISTS submittion (
             uploader text not null references users(studentID),
@@ -37,6 +39,7 @@ def main():
         );
     '''
     util.createTable(conn, createSubmittedSQL)
+    """
 
     createChatSQL = '''
         CREATE TABLE IF NOT EXISTS messages (

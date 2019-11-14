@@ -8,6 +8,7 @@ import utilFunc
 import utilFuncNotes 
 import utilFuncChat
 from json import dumps, load
+import jsonify
 import os
 import re
 
@@ -201,7 +202,7 @@ def getMessages():
     for i, line in enumerate(utilFuncChat.getChat(data)):
         result.append({'messageID': line[0], 'courseCode': line[1], 'timeSent': line[2], 'message': line[3]})
 
-    return dumps(result), 200
+    return jsonify(result), 200
 
 '''
     App-route for deleting a message
@@ -282,6 +283,35 @@ def getVotes():
     else:
         return dumps({'response': 200, 'msg': output}), 200
 
+'''
+    App-route for getting the ladderboard for notes in a particular course
+    :param: in args, a field wirld 'courseCode'
+    :output: {'response': 404, 'msg': ''} on empty courseCode or invalid courseCode
+    Otherwise, a json array with the format:
+    [{'rank': '', 'notesID': '', 'notesName': '', 'nVotes': '', 'notesPublisher' : '', 'notesPublishDate': ''}, ...]
+'''
+@app.route("/api/getCourseLadder")
+@authorised
+def getCourseLadder():
+    data = request.args.get('courseCode')
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    output = utilFuncNotes.getCourseLadder(data)
+    if (isinstance(output) == str):
+        return dumps({'reponse': 404, 'msg': output}), 404
+    else:
+        return jsonify(output), 200
+
+'''
+    App-route for getting the ladderboard for notes in the entire database
+    :param: nothing
+    :output: a json array with the format:
+    [{'rank': '', 'notesID': '', 'notesName': '', 'notesPublisher' : '', 'notesPublishDate': ''}, ...]
+'''
+@app.route("/api/getOverallLadder")
+@authorised
+def getOverallLadder():
+    return 1
 
 if __name__ == '__main__':
     app.run()
