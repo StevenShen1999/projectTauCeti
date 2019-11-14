@@ -8,6 +8,7 @@ def insertDescription(description, course):
     curs = conn.cursor()
     curs.execute("update course set description = ? where courseCode = ?", (description, course,))
     conn.commit()
+    conn.close()
     return "success"
 
 
@@ -17,4 +18,5 @@ def checkCourse(course):
     curs.execute("select * from course where courseCode = ?", (course,))
     conn.commit()
     result = curs.fetchone()
+    conn.close()
     return False if result == None else True

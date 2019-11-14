@@ -10,6 +10,7 @@ def insertChat(message, course, sender):
     conn.commit()
     curs.execute("select last_insert_rowid()")
     messageID = curs.fetchone()[0]
+    conn.close()
 
     return messageID
 
@@ -21,6 +22,7 @@ def removeChat(messageID):
     curs = conn.cursor()
     curs.execute("delete from messages where messageid=?", (messageID,))
     conn.commit()
+    conn.close()
     return "success"
 
 def getChat (course):
@@ -28,7 +30,9 @@ def getChat (course):
     curs = conn.cursor()
     curs.execute("select * from messages where course=?", (course,))
     conn.commit()
-    return curs.fetchall()
+    results = curs.fetchall()
+    conn.close()
+    return results
 
 def checkMessage(messageID):
     conn = utilFunc.create_connection()
@@ -36,6 +40,7 @@ def checkMessage(messageID):
     curs.execute("select * from messages where messageid=?", (messageID,))
     conn.commit()
     result = curs.fetchone()
+    conn.close()
     return False if result != None else True
 
 def main():

@@ -56,7 +56,19 @@ def getCourseLadder(courseID):
     notesRank = curs.fetchall()
     result = []
     for i, note in enumerate(notesRank):
-        result.append({'rank': i, 'notesID': note[0], 'notesName': note[3], 'nVotes': note[6], 'notesPublisher': note[1], 'notesPublisherDate': note[5]})
+        result.append({'rank': i + 1, 'notesID': note[0], 'notesName': note[3], 'nVotes': note[6], 'notesPublisher': note[1], 'notesPublishDate': note[5]})
+    conn.close()
+    return result
+
+def getOverallLadder():
+    conn = util.create_connection()
+    curs = conn.cursor()
+    curs.execute("select * from notes order by nvotes desc")
+    conn.commit()
+    notesRank = curs.fetchall()
+    result = []
+    for i, note in enumerate(notesRank):
+        result.append({'rank': i + 1, 'notesID': note[0], 'notesName': note[3], 'course': note[2], 'nVotes': note[6], 'notesPublisher': note[1], 'notesPublishDate': note[5]})
     conn.close()
     return result
 
@@ -72,7 +84,7 @@ def checkFileExist(fileID):
 def main():
     '''
     for i in range(0, 3):
-        saveFile(r"/mnt/c/Users/Steve\ Shen/COMP/project/tauCeti/database/test0.txt", "COMP9444", "Cool notes brah", "z5161616")
+        saveFile(r"../database/test0.txt", "COMP9444", "Cool notes brah", "z5161616")
     '''
     # print(getFileName(3))
     checkFileExist(3)

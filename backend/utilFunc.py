@@ -38,6 +38,7 @@ def createUser(userID, password):
     curs = conn.cursor()
     curs.execute("insert into users(studentid, password, token) values (?, ?, ?)", (userID, password, None,))
     conn.commit()
+    conn.close()
     return "success"
     
 def login(userID, password):
@@ -47,10 +48,12 @@ def login(userID, password):
     conn.commit()
     result = curs.fetchone()
     if (result == None):
+        conn.close()
         return "user does not exist"
     else:
         result = verifyPassword(password, result[1])
         if (result == False):
+            conn.close()
             return "Password incorrect"
         else:
             token = createToken(userID)
@@ -58,6 +61,7 @@ def login(userID, password):
             print(jwt.decode(token, key, algorithms=['HS256']))
             curs.execute("update users set token=? where studentid=?", (token, userID,))
             conn.commit()
+            conn.close()
             return token
 
 def logout(userID):
@@ -69,6 +73,7 @@ def logout(userID):
     curs = conn.cursor()
     curs.execute("update users set token=? where studentid=?", (None, userID,))
     conn.commit()
+    conn.close()
     return "success"
 
 def hashPassword(password):
@@ -99,6 +104,7 @@ def checkUserExists(userID):
     curs.execute("select * from users where studentid = ?", (userID,))
     conn.commit()
     result = curs.fetchone()
+    conn.close()
     return False if result == None else True
 
 

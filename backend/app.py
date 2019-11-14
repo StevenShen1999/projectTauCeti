@@ -306,12 +306,13 @@ def getCourseLadder():
     App-route for getting the ladderboard for notes in the entire database
     :param: nothing
     :output: a json array with the format:
-    [{'rank': '', 'notesID': '', 'notesName': '', 'notesPublisher' : '', 'notesPublishDate': ''}, ...]
+    [{'rank': '', 'notesID': '', 'notesName': '', 'course': '', 'notesPublisher' : '', 'notesPublishDate': ''}, ...]
 '''
 @app.route("/api/getOverallLadder")
 @authorised
 def getOverallLadder():
-    return 1
+    output = utilFuncNotes.getOverallLadder()
+    return jsonify(output), 200
 
 if __name__ == '__main__':
     app.run()
