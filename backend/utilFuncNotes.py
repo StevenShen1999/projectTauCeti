@@ -81,6 +81,17 @@ def checkFileExist(fileID):
     conn.close()
     return result
 
+def getCourseNotes(courseID):
+    conn = util.create_connection()
+    curs = conn.cursor()
+    curs.execute("select * from notes where course = ?", (courseID,))
+    conn.commit()
+    result = curs.fetchall()
+    results = []
+    for i in result:
+        results.append({'notesID': i[0], 'uploader': i[1], 'course': i[2], 'name': i[3], 'filePath': i[4], 'dateLogged': i[5], 'nVotes': i[6]})
+    return results
+
 def main():
     '''
     for i in range(0, 3):

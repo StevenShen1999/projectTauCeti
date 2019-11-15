@@ -19,4 +19,10 @@ def checkCourse(course):
     conn.commit()
     result = curs.fetchone()
     conn.close()
-    return False if result == None else True
+    return None if result == None else result
+
+def getCourse(course):
+    result = checkCourse(course)
+    if (result == None):
+        return "Course does not exist"
+    return result

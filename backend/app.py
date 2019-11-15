@@ -187,7 +187,7 @@ def addMessage():
 
 '''
     App-route for polling all messages
-    :param: course
+    :param: in args 'course', i.e. course='COMP9444'
     :output: {'response': '', 'msg': ''} on success, returns a json-array containing all of the message
     With format {'messageID': '', 'courseCode': '', 'timeSent': '', 'message': ''}
     related to the course
@@ -242,9 +242,6 @@ def insertDescripiton():
         return dumps({'response': '200', 'msg': 'success'}), 200
     else:
         return dumps({'response': '400', 'msg': 'course doesnt exist'}), 400
-
-# TODO: Get a ladder board of top voted notes, get a course dump, get a specific course information
-# TODO: Get all messages sent within that course
 
 '''
     App-route for upvoting a particular note
@@ -313,6 +310,26 @@ def getCourseLadder():
 def getOverallLadder():
     output = utilFuncNotes.getOverallLadder()
     return jsonify(output), 200
+
+'''
+    App-route for getting the information of a particular course
+    :param: 'courseCode'
+    :output: a json array with the format:
+    [{'courseCode': '', 'courseName': '', 'description': '', 'notes': [], 'messages': []}]
+'''
+@app.route("/api/getCourse")
+@authorised
+def getCourse():
+    data = request.args.get('courseCode')
+    if (data == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
+    courseInfo = utilFuncCourses.getCourse(data)
+    courseInfo.append(utilFuncChat.getChat(data))
+    courseInfo.append(utilFuncNotes.getCourseNotes(data))
+    return jsonify(courseInfo), 200
+    # FIXME: Debug this app route when avaliable
+
+# TODO: Get a course dum
 
 if __name__ == '__main__':
     app.run()
