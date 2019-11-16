@@ -12,6 +12,11 @@ import jsonify
 import os
 import re
 
+'''
+    FIXME: CHECK FOR USERID IN AUTHORIZATION, AS SHOWN IN LOGOUT, CURRENTLY NOT DOING VERIFYING IF THE TOKEN CONTAINS THE RIGHT USER ID
+'''
+
+
 app = Flask(__name__)
 UPLOAD_FOLDER = '../database'
 ALLOWED_EXTENSIONS = {'pdf', 'jpg', 'png', 'docx', 'jpeg', 'txt'}
@@ -165,6 +170,32 @@ def logout(user):
         payload['response'] = 200
         payload['msg'] = output
         return dumps(payload), 200
+
+'''
+    App-route for deleting user
+    :param: {'userID': ''}
+    :output: {'response': '', 'msg': ''} 404 on error, 200 on success
+'''
+@app.route("/api/deleteUser", methods=['POST'])
+@authorised
+def deleteUser(user):
+    data = request.get_json()
+    userID = data['userID']
+
+    if (user != userID):
+        return dumps({'resposne': 405, 'msg': "Not using the right token"}), 405
+    output = utilFunc.deleteUser(userID)
+    payload = {}
+    if (output != "success"):
+        payload['response'] = 405
+        payload['msg'] = output
+        return dumps(payload), 405
+    else:
+        payload['response'] = 200
+        payload['msg'] = output
+        return dumps(payload), 200
+
+
 
 '''
     App-route for sending a message

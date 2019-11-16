@@ -8,7 +8,7 @@ def main():
         CREATE TABLE IF NOT EXISTS notes (
             notesID integer primary key autoincrement,
             uploader text not null references users(studentID),
-            course text not null,
+            course text not null references course(coursecode),
             name text not null,
             filePath text not null,
             dateLogged date not null,

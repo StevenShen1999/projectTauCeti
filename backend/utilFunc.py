@@ -107,6 +107,16 @@ def checkUserExists(userID):
     conn.close()
     return False if result == None else True
 
+def deleteUser(userID):
+    result = checkUserExists(userID)
+    if result == False:
+        return "no such user"
+    conn = create_connection()
+    curs = conn.cursor()
+    curs.execute("delete from users where studentid = ?", (userID,))
+    conn.commit()
+    conn.close()
+    return "success"
 
 def main():
     create_connection()
