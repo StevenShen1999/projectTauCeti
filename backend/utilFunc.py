@@ -30,13 +30,13 @@ def runQuery(conn, sql, arg):
     except Error as e:
         print(e)
 
-def createUser(userID, password):
+def createUser(userID, password, userName):
     if (checkUserExists(userID) == True):
         return "user already exists"
     password = hashPassword(password)
     conn = create_connection()
     curs = conn.cursor()
-    curs.execute("insert into users(studentid, password, token) values (?, ?, ?)", (userID, password, None,))
+    curs.execute("insert into users(studentid, password, studentName, token) values (?, ?, ?, ?)", (userID, password, userName, None,))
     conn.commit()
     conn.close()
     return "success"
@@ -119,11 +119,15 @@ def deleteUser(userID):
     return "success"
 
 def main():
-    create_connection()
+    # create_connection()
     # print(checkUserExists("z5161616"))
-    createUser("z5161616", "990928ss")
+    createUser("z5161616", "990928ss", "Steven Shen")
+    createUser("z5161631", "yanglel", "Junyang Sim")
+    createUser("z5111111", "asdasdas", "Generic User")
     # print(checkUserExists("z5161616"))
     login("z5161616", "990928ss")
+    login("z5161631", "yanglel")
+    login("z5111111", "asdasdas")
 
 if __name__ == '__main__':
     main()

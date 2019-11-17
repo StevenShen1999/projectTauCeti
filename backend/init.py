@@ -24,6 +24,7 @@ def main():
         CREATE TABLE IF NOT EXISTS users (
             studentID text not null,
             password text not null,
+            studentName text not null,
             token text,
             primary key (studentID)
         );

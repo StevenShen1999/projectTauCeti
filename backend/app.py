@@ -40,6 +40,7 @@ def allowed_files(filename):
 def authorised(f):
     @wraps(f)
     def decorated_function(*args, **kws):
+        print(args)
         if request.headers['Authorization'] == None:
             payload = {'response': 401, 'msg': "Not logged in"}
             return dumps(payload)
@@ -126,7 +127,7 @@ def login():
 
 '''
     App-route for registering a user
-    :param: {userID: "", password; ""}
+    :param: {'userID': "", 'password'; "", 'studentName': ""}
     :output: {response: "", msg: ""}
     Output provides error message on errors, otherwise msg is not incldued
 '''
@@ -135,8 +136,11 @@ def register():
     data = request.get_json()
     userID = data['userID']
     password = data['password']
+    userName = data['studentName']
+    if (userID == None or password == None or userName == None):
+        return dumps({'response': 400, 'msg': 'Not enough arguments'}), 400
 
-    output = utilFunc.createUser(userID, password)
+    output = utilFunc.createUser(userID, password, userName)
     payload = {}
     if (payload != "success"):
         payload['response'] = 200
