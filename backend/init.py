@@ -3,6 +3,7 @@ import re
 from sqlite3 import Error
 import utilFunc as util
 
+# TODO: Reallocate this section into a separate .sql table
 def main():
     createNotesSQL = '''
         CREATE TABLE IF NOT EXISTS notes (

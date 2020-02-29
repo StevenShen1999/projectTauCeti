@@ -1,4 +1,4 @@
-import utilFunc
+from databaseUtil import utilFunc
 
 def insertDescription(description, course):
     courseExists = checkCourse(course)

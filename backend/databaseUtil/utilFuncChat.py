@@ -1,6 +1,6 @@
 from sqlite3 import Error
 import sqlite3
-import utilFunc
+from databaseUtil import utilFunc
 import datetime
 
 def insertChat(message, course, sender):

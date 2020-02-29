@@ -1,19 +1,22 @@
-import utilFuncCourses
 from flask import request, Flask, send_file, make_response, abort, send_from_directory, Response
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 import jwt
 from functools import wraps
-import utilFunc
-import utilFuncNotes 
-import utilFuncChat
+from databaseUtil import utilFunc, utilFuncNotes, utilFuncChat, utilFuncCourses
 from json import dumps, load
-import jsonify
+from flask import jsonify
 import os
 import re
 
 '''
     FIXME: CHECK FOR USERID IN AUTHORIZATION, AS SHOWN IN LOGOUT, CURRENTLY NOT DOING VERIFYING IF THE TOKEN CONTAINS THE RIGHT USER ID
+    29/02/2020 UPDATE:
+    TODO: Add in flask-restx to build a restful app
+    TODO: Add in marshmallow validation
+    TODO: Fix decorator check
+    TODO: Migrate sqlite3 into psql
+    TODO: Refactor code into different namespaces (just like the ones in pointr)
 '''
 
 
@@ -37,6 +40,7 @@ def allowed_files(filename):
 '''
 
 # Our authorised function will determine if user has logged in with valid credentials
+# TODO: Fix this decorator
 def authorised(f):
     @wraps(f)
     def decorated_function(*args, **kws):

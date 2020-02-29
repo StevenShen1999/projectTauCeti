@@ -8,6 +8,7 @@ import datetime
 
 key = os.urandom(32).decode('utf-8', 'replace')
 
+# Change the database from sqlite3 into postgres
 def create_connection():
     conn = None
     try:
@@ -41,6 +42,7 @@ def createUser(userID, password, userName):
     conn.close()
     return "success"
     
+# Don't have to store the token in the database, only need to return it to the front end
 def login(userID, password):
     conn = create_connection()
     curs = conn.cursor()

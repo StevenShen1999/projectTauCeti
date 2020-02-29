@@ -1,8 +1,8 @@
 import sqlite3
 from sqlite3 import Error
-import utilFunc as util
+from databaseUtil import utilFunc as util
 import datetime
-import utilFuncCourses
+from databaseUtil import utilFuncCourses
 
 def saveFile(fileIn, course, name, userID):
     conn = util.create_connection()
