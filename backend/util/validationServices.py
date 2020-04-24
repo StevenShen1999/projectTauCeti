@@ -10,7 +10,10 @@ def validate_with(schema):
             try:
                 data = schema().load(request.get_json())
             except ValidationError as error:
-                abort(400, error.messages)
+                errorMessages = []
+                for i in error.messages:
+                    errorMessages.append(f"{i.capitalize()}: {error.messages[i]}")
+                abort(400, "; ".join(errorMessages))
 
             return func(data=data, *args, **kwargs)
         return wrapper

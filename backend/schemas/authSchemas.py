@@ -22,3 +22,6 @@ class RegistrationSchema(Schema):
 class LoginSchema(Schema):
     email = gs.email
     password = gs.password
+
+class TokenSchema(Schema):
+    token = gs.token
