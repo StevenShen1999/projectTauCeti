@@ -23,11 +23,11 @@ from namespaces.uploads import api as uploads # Might deprecate this
 from namespaces.users import api as users
 from namespaces.auth import api as auth
 
-api.add_namespace(courses)
-api.add_namespace(notes)
-api.add_namespace(uploads)
-api.add_namespace(users)
-api.add_namespace(auth)
+api.add_namespace(courses, path='/courses')
+api.add_namespace(notes, path='/notes')
+api.add_namespace(uploads, path='/uploads')
+api.add_namespace(users, path='/users')
+api.add_namespace(auth, path='/auth')
 
 # CORS
 CORS(app)

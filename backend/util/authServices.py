@@ -5,6 +5,7 @@ from util.emailServices import sendActivationEmail
 from flask import request, abort
 from schemas.authSchemas import *
 from marshmallow import ValidationError
+from models.users import Users
 
 ### Expiration Time For Tokens is 24 Hours
 tokenExp = 24*60*60
@@ -38,6 +39,9 @@ def validateToken(activation=True):
                 or jwt.ExpiredSignatureError \
                 or jwt.ExpiredSignatureError:
                 abort(403, "Invalid Token (Most Likely Token's Secret Not Valid Or Expired Token)")
+
+            exists = Users.query.filter_by(email=token_data['email']).first()
+            if not exists: abort(403, "Invalid Token (Most Likely Token's Secret Not Valid Or Expired Token)")
 
             return func(token_data=token_data, *args, **kwargs)
         return wrapper

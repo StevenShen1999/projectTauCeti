@@ -5,7 +5,7 @@ def validate_with(schema):
     def decorator(func):
         def wrapper(*args, **kwargs):
             if not request.json:
-                abort(400, "Missing Email/Username/Password")
+                abort(400, "Missing Parametres")
 
             try:
                 data = schema().load(request.get_json())

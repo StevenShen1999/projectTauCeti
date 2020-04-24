@@ -19,7 +19,7 @@ class DB():
             Column('createdAt', TIMESTAMP(True), nullable=False)
         )
 
-        self.courses = Table("courses", meta, Column('id', String, primary_key=True),
+        self.courses = Table("courses", meta, Column('id', Integer, primary_key=True, autoincrement=True),
             Column('code', String, nullable=False),
             Column('name', String(50), nullable=False),
             Column('semester', String(4), nullable=False),

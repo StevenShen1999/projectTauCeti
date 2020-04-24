@@ -28,9 +28,8 @@ class Register(Resource):
         exists = Users.query.filter_by(email=data.email).first()
         if exists: abort(409, "Account with this email address already exists")
 
-        if data:
-            db.session.add(data)
-            db.session.commit()
+        db.session.add(data)
+        db.session.commit()
 
         status = registerUser(data)
 
@@ -106,9 +105,12 @@ class Lost(Resource):
 
         return jsonify({"message": "Success"})
 
+# Stub API
+"""
 @api.route("/forgot")
 class Forgot(Resource):
     @api.doc(description='''API Not Implemented''')
     def post(self):
         # TODO: TO BE COMPLETED, SECONDARY IMPORTANT ROUTE
         return 0
+"""
