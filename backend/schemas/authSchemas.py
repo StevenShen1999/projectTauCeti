@@ -17,7 +17,7 @@ class RegistrationSchema(Schema):
         return Users(email=data['email'], username=data['username'], 
             password=sha256(data['password'].encode('UTF-8')).hexdigest(),
             activated=False, points=0, link=''.join(random.choices(ascii_letters + digits, k=16)), 
-            createdDate=str(datetime.utcnow()))
+            createddate=str(datetime.utcnow()))
 
 class LoginSchema(Schema):
     email = gs.email

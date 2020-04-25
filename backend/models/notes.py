@@ -1,7 +1,30 @@
 from app import db
-from uuid import uuid4
 from flask_sqlalchemy import SQLAlchemy
 
 class Notes(db.Model):
-    # Stubs
-    a = 0
+    __tablename__ = 'notes'
+
+    id = db.Column(db.Text, primary_key=True)
+    name = db.Column(db.Text, nullable=False)
+    points = db.Column(db.Integer, nullable=False)
+    price = db.Column(db.Integer, nullable=True)
+    uploadtime = db.Column(db.DateTime, nullable=False)
+    path = db.Column(db.Text, nullable=False)
+
+    courseid = db.Column(db.Text, db.ForeignKey('courses.id'), nullable=False)
+    _course = db.relationship("Courses", back_populates="_notes")
+    uploaderid = db.Column(db.Text, db.ForeignKey('users.email'), nullable=False)
+    _uploader = db.relationship("Users", back_populates="_notes")
+
+    def jsonifyObject(self):
+        payload = {}
+        payload['id'] = self.id
+        payload['name'] = self.name
+        payload['points'] = self.points
+        payload['price'] = self.price
+        payload['uploadtime'] = self.uploadtime
+        payload['path'] = self.path
+        payload['courseid'] = self.courseid
+        payload['uploaderid'] = self.uploaderid
+
+        return payload

@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, send_from_directory
 from flask_restplus import Api
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -28,6 +28,21 @@ api.add_namespace(notes, path='/notes')
 api.add_namespace(uploads, path='/uploads')
 api.add_namespace(users, path='/users')
 api.add_namespace(auth, path='/auth')
+
+# File Upload
+if (app.config['ENV'] == 'development'):
+    @app.route('/assets/images/<path:path>')
+    def send_images(path):
+            return send_from_directory('../assets/images/', path)
+
+    if (os.path.exists("../assets/images/") == False):
+        os.mkdir("../assets")
+        os.mkdir("../assets/images")
+
+if (app.config['ENV'] == 'development'):
+    app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
+elif (app.config['ENV'] in ['production','test']):
+    app.config['UPLOAD_FOLDER'] = f"/var/www/static/assets/images/"
 
 # CORS
 CORS(app)

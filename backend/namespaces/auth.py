@@ -9,7 +9,7 @@ from models.authModels import *
 from schemas.authSchemas import *
 from util.authServices import registerUser, validateToken, loginUser
 from flask import jsonify
-import hashlib
+from hashlib import sha256
 
 @api.route("/register")
 class Register(Resource):
@@ -39,7 +39,7 @@ class Register(Resource):
 
 @api.route("/activate")
 class Activate(Resource):
-    @api.response(200, "Success")
+    @api.response(200, "{'message': 'Success'}")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Token (Most Likely Token's Secret Not Valid Or Expired Token)")
     @api.response(409, "Account Already Activated")
@@ -59,7 +59,7 @@ class Activate(Resource):
         db.session.add(user)
         db.session.commit()
 
-        return jsonify({"status": "Success"})
+        return jsonify({"message": "Success"})
 
 @api.route("/login")
 class Login(Resource):
@@ -72,7 +72,7 @@ class Login(Resource):
     @validate_with(LoginSchema)
     def post(self, data):
         user = Users.query.filter_by(email=data['email'], 
-            password=hashlib.sha256(data['password'].encode('utf-8')).hexdigest()).first()
+            password=sha256(data['password'].encode('UTF-8')).hexdigest()).first()
 
         if not user: abort(403, "Invalid Credentials (Wrong Email Or Password)")
         elif user.activated == False: abort(405, "This account isn't activated, please activate your account")
@@ -95,7 +95,7 @@ class Lost(Resource):
     @validate_with(LoginSchema)
     def post(self, data):
         user = Users.query.filter_by(email=data['email'], 
-            password=hashlib.sha256(data['password'].encode('utf-8')).hexdigest()).first()
+            password=sha256(data['password'].encode('utf-8')).hexdigest()).first()
 
         if not user: abort(403, "Invalid Credentials (Wrong Email or Password)")
         elif user.activated == True: abort(409, "Account Already Activated")

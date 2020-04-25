@@ -35,7 +35,8 @@ def validateToken(activation=True):
                     jwtKey,
                     algorithms='HS256'
                 )
-            except jwt.DecodeError or jwt.InvalidSignatureError \
+            except jwt.DecodeError \
+                or jwt.InvalidSignatureError \
                 or jwt.ExpiredSignatureError \
                 or jwt.ExpiredSignatureError:
                 abort(403, "Invalid Token (Most Likely Token's Secret Not Valid Or Expired Token)")

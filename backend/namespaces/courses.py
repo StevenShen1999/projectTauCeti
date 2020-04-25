@@ -12,7 +12,7 @@ from flask import jsonify
 
 @api.route("/")
 class EventRegister(Resource):
-    @api.response(200, "{'status': 'Success', 'courseID': ''}")
+    @api.response(200, "{'message': 'Success', 'courseID': ''}")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Parametres")
     @api.response(409, "Course with this course code at this semester already exists")
@@ -47,6 +47,8 @@ class EventRegister(Resource):
 
         return jsonify({"message": "Success"})
 
+@api.route("/<string:courseID>")
+class GetCourse(Resource):
     @api.doc(description="Stub API, not yet implemented")
     def get(self):
         return 0

@@ -5,6 +5,8 @@ generalString = fields.String(required=True, allow_none=False,
     validate=validate.Regexp("^[a-zA-Z0-9 ,-_]+$", 
     error="Special Characters Not Allowed"))
 
+generalInteger = fields.Integer(required=True, allow_none=False, error="That's not an integer")
+
 email = fields.Email(required=True, allow_none=False)
 
 username = fields.String(required=True, allow_none=False, 
