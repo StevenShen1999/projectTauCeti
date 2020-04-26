@@ -28,3 +28,6 @@ class Notes(db.Model):
         payload['uploaderid'] = self.uploaderid
 
         return payload
+
+    def vote(self, value):
+        self.points += value

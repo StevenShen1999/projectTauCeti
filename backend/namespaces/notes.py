@@ -83,6 +83,28 @@ class NoteInfo(Resource):
         return jsonify({'message': 'Success'})
 
 
+@api.route("/vote")
+class NoteVoter(Resource):
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.expect(notesVoterDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
+        description="Use this API to vote for a note (either upvote or downvote)")
+    @validate_with_args(noteVoterSchema)
+    @validateToken()
+    def post(self, token_data, data):
+        note = Notes.query.filter_by(id=data['noteID']).first()
+        if not note: abort(403, "Invalid Parametres (No such note)")
+
+        note.vote(data['vote'])
+
+        db.session.add(note)
+        db.session.commit()
+
+        return jsonify({"message": "Success"})
+
+
 @api.route("/course", endpoint='course')
 class CourseNotes(Resource):
     @api.response(200, '''{'message': 'Success',\

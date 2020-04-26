@@ -20,3 +20,7 @@ class notesGeneralSchema(Schema):
 
 class courseNoteSchema(Schema):
     courseID = gs.generalString
+
+class noteVoterSchema(Schema):
+    noteID = gs.generalString
+    vote = gs.generalInteger

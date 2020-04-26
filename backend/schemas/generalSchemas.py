@@ -24,3 +24,6 @@ token = fields.String(required=True, validate=validate.Regexp("^[a-zA-Z0-9+_]+.[
 course = fields.String(required=True, allow_none=False, validate=validate.Regexp("^([A-Za-z]){4}([0-9]){4}$"))
 
 semester = fields.String(required=True, allow_none=False, validate=validate.Regexp("^([0-9]){2}[tTsS][0-4]$"))
+
+voteType = fields.String(required=True, allow_none=False,
+    validate=validate.OneOf(["upvote", "downvote"], error="Invalid Vote type"))
