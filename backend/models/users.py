@@ -12,6 +12,16 @@ class Users(db.Model):
     points = db.Column(db.Integer, default=0, nullable=False)
     link = db.Column(db.Text, nullable=False)
     createddate = db.Column(db.DateTime, nullable=False)
+    # Need a section here for the referred by person
 
     _notes = db.relationship("Notes", uselist=False, back_populates="_uploader")
     _courses = db.relationship("Courses", uselist=False, back_populates="_created")
+
+    def jsonifyObject(self):
+        payload = {}
+        payload['email'] = self.email
+        payload['username'] = self.username
+        payload['activated'] = self.activated
+        payload['points'] = self.points
+        payload['link'] = self.link
+        payload['createddate'] = self.createddate

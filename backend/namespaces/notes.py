@@ -52,7 +52,6 @@ class NoteInfo(Resource):
     @api.expect(notesDetails)
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
         description="Use this API to get the infomation of a note")
-    #def get(self, token_data, data):
     @validate_with_args(notesGeneralSchema)
     @validateToken()
     def get(self, token_data, data):
@@ -63,18 +62,20 @@ class NoteInfo(Resource):
         return jsonify({'message': 'Success', 'payload': payload})
 
 
-    @api.response(200, "{'message': 'Success'}")
+    @api.response(200, "Success")
     @api.response(400, "Missing Parametres")
+    @api.response(401, "Access Denied, Not The Note Owner")
     @api.response(403, "Invalid Parametres")
     @api.expect(notesDetails)
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
         description="Use this API to delete a note")
-    #def get(self, token_data, data):
     @validate_with_args(notesGeneralSchema)
     @validateToken()
     def delete(self, token_data, data):
         exists = Notes.query.filter_by(id=data['noteID']).first()
         if not exists: abort(403, "Invalid Parametres (No such note)")
+
+        if exists.uploaderid != token_data['email']: abort(401, "Access Denied, Not The Note Owner")
 
         db.session.delete(exists)
         db.session.commit()
@@ -82,7 +83,7 @@ class NoteInfo(Resource):
         return jsonify({'message': 'Success'})
 
 
-@api.route("/course")
+@api.route("/course", endpoint='course')
 class CourseNotes(Resource):
     @api.response(200, '''{'message': 'Success',\
          'payload': [{'id': 'skdfh', 'name': 'A note that i uploaded', \
