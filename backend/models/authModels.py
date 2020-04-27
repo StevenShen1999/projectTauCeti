@@ -26,3 +26,11 @@ loginDetails = api.model("Login Details",
         "password": fields.String(required=True, example="Abcd1234@")
     }
 )
+
+verifyDetails = api.model("For verifying accounts",
+    {
+        "email": fields.String(required=True, example="something@somemail.com"),
+        "password": fields.String(required=True, example="Abcd1234@"),
+        "verification": fields.String(required=True, example="833123")
+    }
+)

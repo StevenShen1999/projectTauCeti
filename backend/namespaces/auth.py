@@ -7,9 +7,10 @@ from models.users import Users
 from app import db
 from models.authModels import *
 from schemas.authSchemas import *
-from util.authServices import registerUser, validateToken, loginUser
+from util.authServices import registerUser, validateToken, loginUser, generateVerification, verifyUser
 from flask import jsonify
 from hashlib import sha256
+from datetime import datetime, timedelta
 
 @api.route("/register")
 class Register(Resource):
@@ -67,18 +68,35 @@ class Login(Resource):
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Credentials (Wrong Email or Password)")
     @api.response(405, "This account isn't activated, please activate your account")
+    @api.response(412, "Account locked, please try again in 24 hours")
+    @api.response(423, "More than 31 days since last login, a verification code sent to email, require that to verify")
+    @api.response(500, "Email service not currently avaliable, sending email not successful")
     @api.expect(loginDetails)
     @api.doc(description="API For Logging In Users")
     @validate_with(LoginSchema)
     def post(self, data):
-        user = Users.query.filter_by(email=data['email'], 
-            password=sha256(data['password'].encode('UTF-8')).hexdigest()).first()
+        user = Users.query.filter_by(email=data['email']).first()
 
-        if not user: abort(403, "Invalid Credentials (Wrong Email Or Password)")
-        elif user.activated == False: abort(405, "This account isn't activated, please activate your account")
+        token = loginUser(user, data)
 
-        token = loginUser(user)
         return jsonify({"message": "Success", "token": token})
+
+@api.route("/verify")
+class Verify(Resource):
+    @api.response(200, "{'message': 'success', 'token': 'someJWTString'}")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Credentials (wrong verification code)")
+    @api.response(409, "Account already verified, verification code expired")
+    @api.expect(verifyDetails)
+    @api.doc(description="Use this API to input verification codes for logging in users")
+    @validate_with(VerificationSchema)
+    def post(self, data):
+        user = Users.query.filter_by(email=data['email']).first()
+
+        token = verifyUser(user, data)
+
+        return jsonify({"message": "Success", "token": token})
+
 
 @api.route("/lost")
 class Lost(Resource):

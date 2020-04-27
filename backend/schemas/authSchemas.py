@@ -14,14 +14,21 @@ class RegistrationSchema(Schema):
 
     @post_load
     def makeUser(self, data, **kwargs):
+        # Defaults to creating a user of permission level 0 (i.e. normal user)
         return Users(email=data['email'], username=data['username'], 
             password=sha256(data['password'].encode('UTF-8')).hexdigest(),
-            activated=False, points=0, link=''.join(random.choices(ascii_letters + digits, k=16)), 
-            createddate=str(datetime.utcnow()))
+            activated=False, points=0,
+            link=''.join(random.choices(ascii_letters + digits, k=16)), 
+            createddate=str(datetime.utcnow()), role=0, failedlogins=0)
 
 class LoginSchema(Schema):
     email = gs.email
     password = gs.password
+
+class VerificationSchema(Schema):
+    email = gs.email
+    password = gs.password
+    verification = gs.generalInteger
 
 class TokenSchema(Schema):
     token = gs.token
