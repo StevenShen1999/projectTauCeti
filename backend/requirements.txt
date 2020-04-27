@@ -7,5 +7,5 @@ PyJWT==1.7.1
 flask-restplus==0.13.0
 Flask-SQLAlchemy==2.4.1
 marshmallow==3.3.0
-werkzeug==0.16.1
 psycopg2==2.8.4
+werkzeug==0.16.1

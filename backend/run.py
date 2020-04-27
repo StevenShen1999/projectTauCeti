@@ -16,8 +16,8 @@ if len(sys.argv) < 3:
 os.environ['SQLPassword'] = sys.argv[1]
 os.environ['TAUCETI_SECRET_KEY'] = sys.argv[2]
 
-from app import db, app
+from app import app
 
 if __name__ == "__main__":
-    db.create_all()
+    #db.create_all()
     app.run(debug=True)
