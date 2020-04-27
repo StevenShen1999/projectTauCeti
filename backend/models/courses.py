@@ -7,7 +7,7 @@ class Courses(db.Model):
     id = db.Column(db.Text, primary_key=True)
     code = db.Column(db.String(8), nullable=False)
     name = db.Column(db.Text, nullable=False)
-    semester = db.Column(db.String(4), nullable=False)
+    #semester = db.Column(db.String(4), nullable=False)
     university = db.Column(db.Text, nullable=False)
 
     _notes = db.relationship("Notes", uselist=False, back_populates="_course")
