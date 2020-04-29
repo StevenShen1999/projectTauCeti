@@ -4,6 +4,7 @@ from util.validationServices import validate_with, validate_with_form, validate_
 api = Namespace("notes", description="APIs to handle notes related queries")
 
 from models.notes import Notes
+from models.users import Users
 from app import db
 from models.notesModels import *
 from schemas.noteSchemas import *
@@ -27,7 +28,7 @@ class notesBaseAPI(Resource):
         if not request.files:
             abort(400, "Missing Parametres")
 
-        data.uploaderid = token_data['email']
+        data.uploaderid = token_data['id']
 
         uploadStatus = uploadImages(request.files['file'])
         if not isinstance(uploadStatus, tuple): abort(403, uploadStatus)
@@ -39,8 +40,6 @@ class notesBaseAPI(Resource):
         return jsonify({'message': 'Success', 'noteID': data.id})
 
 
-@api.route("/<string:noteID>")
-class NoteInfo(Resource):
     @api.response(200, '''{'message': 'Success',\
          'payload': {'id': 'skdfh', 'name': 'A note that i uploaded', \
              'points': 123, 'price': 123, 'uploadTime': '2020-03-01 12:12:31', \
@@ -95,14 +94,20 @@ class NoteVoter(Resource):
     @validateToken()
     def post(self, token_data, data):
         note = Notes.query.filter_by(id=data['noteID']).first()
+        user = Users.query.filter_by(email=token_data['email']).first()
         if not note: abort(403, "Invalid Parametres (No such note)")
 
         note.vote(data['vote'])
+        user.vote(data['vote'])
 
         db.session.add(note)
         db.session.commit()
 
         return jsonify({"message": "Success"})
+
+    # For admins to delete bogus votes
+    def delete(self, token_data, data):
+        return "Success"
 
 
 @api.route("/course", endpoint='course')

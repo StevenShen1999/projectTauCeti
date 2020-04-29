@@ -38,10 +38,7 @@ def validateToken(activation=True, roleRequired=0):
                     jwtKey,
                     algorithms='HS256'
                 )
-            except jwt.DecodeError \
-                or jwt.InvalidSignatureError \
-                or jwt.ExpiredSignatureError \
-                or jwt.ExpiredSignatureError:
+            except jwt.PyJWTError:
                 abort(403, "Invalid Token (Most Likely Token's Secret Not Valid Or Expired Token)")
 
             exists = Users.query.filter_by(email=token_data['email']).first()
@@ -65,6 +62,7 @@ def registerUser(user):
         {
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(seconds=activationTokenExp),
+            'id': user.id,
             'email': user.email,
             'type': 'activation'
         },
@@ -112,6 +110,7 @@ def loginUser(user, data):
         {
             'iat': datetime.utcnow(),
             'exp': datetime.utcnow() + timedelta(seconds=tokenExp),
+            'id': user.id,
             'email': user.email,
             'type': 'standard'
         },

@@ -22,12 +22,14 @@ from namespaces.notes import api as notes
 from namespaces.uploads import api as uploads # Might deprecate this
 from namespaces.users import api as users
 from namespaces.auth import api as auth
+from namespaces.messages import api as messages
 
 api.add_namespace(courses, path='/courses')
 api.add_namespace(notes, path='/notes')
 api.add_namespace(uploads, path='/uploads')
 api.add_namespace(users, path='/users')
 api.add_namespace(auth, path='/auth')
+api.add_namespace(messages, path='/messages')
 
 # File Upload
 if (app.config['ENV'] == 'development'):
@@ -35,9 +37,8 @@ if (app.config['ENV'] == 'development'):
     def send_images(path):
             return send_from_directory('../assets/images/', path)
 
-    if (os.path.exists("../assets/images/") == False):
-        os.mkdir("../assets")
-        os.mkdir("../assets/images")
+    if not os.path.exists("../assets/images/"):
+        os.makedirs("../assets/images")
 
 if (app.config['ENV'] == 'development'):
     app.config['UPLOAD_FOLDER'] = f"{os.path.abspath(os.path.join(os.path.dirname( __file__ ), '..'))}/assets/images/"
