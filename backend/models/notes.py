@@ -16,8 +16,6 @@ class Notes(db.Model):
     uploaderid = db.Column(db.Text, db.ForeignKey('users.id'), nullable=False)
     _uploader = db.relationship("Users", back_populates="_notes")
 
-    _messages = db.relationship("Messages", uselist=False, back_populates="_note")
-
     def jsonifyObject(self):
         payload = {}
         payload['id'] = self.id

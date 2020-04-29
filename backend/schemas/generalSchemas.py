@@ -1,11 +1,17 @@
 from marshmallow import Schema, fields, validate
 import string
 
+# THis is used for more sensitive fields
 generalString = fields.String(required=True, allow_none=False, 
     validate=validate.Regexp("^[a-zA-Z0-9 ,-_]+$", 
     error="Special Characters Not Allowed"))
 
+# More general-er version of a string
+generalerString = fields.String(required=True, allow_none=False)
+
 generalInteger = fields.Integer(required=True, allow_none=False, error="That's not an integer")
+
+generalTimeStamp = fields.DateTime(required=True, allow_none=False, error="Not a valid ISO timecode, try again")
 
 email = fields.Email(required=True, allow_none=False)
 

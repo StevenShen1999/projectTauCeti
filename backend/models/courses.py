@@ -14,4 +14,5 @@ class Courses(db.Model):
     createdby = db.Column(db.Text, db.ForeignKey('users.id'), nullable=True)
     _created = db.relationship("Users", back_populates="_courses")
 
+    _messages = db.relationship("Messages", uselist=False, back_populates="_course")
     # NOTE: Potentially we can have Country/State here as well
