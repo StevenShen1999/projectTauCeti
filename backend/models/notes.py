@@ -8,13 +8,15 @@ class Notes(db.Model):
     name = db.Column(db.Text, nullable=False)
     points = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Integer, nullable=True)
-    uploadtime = db.Column(db.DateTime, nullable=False)
+    uploadtime = db.Column(db.DateTime(timezone=True), nullable=False)
     path = db.Column(db.Text, nullable=False)
 
     courseid = db.Column(db.Text, db.ForeignKey('courses.id'), nullable=False)
     _course = db.relationship("Courses", back_populates="_notes")
-    uploaderid = db.Column(db.Text, db.ForeignKey('users.email'), nullable=False)
+    uploaderid = db.Column(db.Text, db.ForeignKey('users.id'), nullable=False)
     _uploader = db.relationship("Users", back_populates="_notes")
+
+    _messages = db.relationship("Messages", uselist=False, back_populates="_note")
 
     def jsonifyObject(self):
         payload = {}

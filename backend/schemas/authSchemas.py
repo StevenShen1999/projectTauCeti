@@ -15,7 +15,8 @@ class RegistrationSchema(Schema):
     @post_load
     def makeUser(self, data, **kwargs):
         # Defaults to creating a user of permission level 0 (i.e. normal user)
-        return Users(email=data['email'], username=data['username'], 
+        return Users(id=''.join(random.choices(ascii_letters + digits, k=16)),
+            email=data['email'], username=data['username'], 
             password=sha256(data['password'].encode('UTF-8')).hexdigest(),
             activated=False, points=0,
             link=''.join(random.choices(ascii_letters + digits, k=16)), 

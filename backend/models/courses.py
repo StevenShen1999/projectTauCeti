@@ -11,7 +11,7 @@ class Courses(db.Model):
     university = db.Column(db.Text, nullable=False)
 
     _notes = db.relationship("Notes", uselist=False, back_populates="_course")
-    createdby = db.Column(db.Text, db.ForeignKey('users.email'), nullable=True)
+    createdby = db.Column(db.Text, db.ForeignKey('users.id'), nullable=True)
     _created = db.relationship("Users", back_populates="_courses")
 
     # NOTE: Potentially we can have Country/State here as well

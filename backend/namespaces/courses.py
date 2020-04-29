@@ -22,7 +22,7 @@ class EventRegister(Resource):
     @validate_with(CourseRegistrationSchema)
     @validateToken()
     def post(self, token_data, data):
-        exists = Courses.query.filter_by(code=data.code, semester=data.semester, university=data.university).first()
+        exists = Courses.query.filter_by(code=data.code, university=data.university).first()
         if exists: abort(409, "Course with this course code at this semester already exists")
 
         db.session.add(data)
