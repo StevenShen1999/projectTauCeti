@@ -48,7 +48,32 @@ with the following changes:
 
     try:
         msg = mail.send_message(
-            f'TauCeti: Request to update {type} : {identification}',
+            f'TauCeti: Request To Update {type} : {identification}',
+            sender=app.config['MAIL_USERNAME'],
+            recipients=["stevenshen1999@hotmail.com"], # FIXME: Change this to a collection of admin accounts
+            body=message
+        )
+    except Exception:
+        return str(Exception)
+    return "success"
+
+
+def sendReportEmail(type, identification, reason, sender, typeName):
+    type = type.upper()
+    message = f"""\
+Hey, \nUSER: {sender}
+
+reported
+
+{type} (id: {identification}, name: {typeName})
+
+for:
+
+{reason}."""
+
+    try:
+        msg = mail.send_message(
+            f'TauCeti: {type} : {typeName} Reported',
             sender=app.config['MAIL_USERNAME'],
             recipients=["stevenshen1999@hotmail.com"], # FIXME: Change this to a collection of admin accounts
             body=message

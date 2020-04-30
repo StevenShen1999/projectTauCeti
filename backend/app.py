@@ -19,17 +19,17 @@ db = SQLAlchemy(app)
 # Flask-restplus
 from namespaces.courses import api as courses
 from namespaces.notes import api as notes
-from namespaces.uploads import api as uploads # Might deprecate this
 from namespaces.users import api as users
 from namespaces.auth import api as auth
 from namespaces.messages import api as messages
+from namespaces.report import api as report
 
 api.add_namespace(courses, path='/courses')
 api.add_namespace(notes, path='/notes')
-api.add_namespace(uploads, path='/uploads')
 api.add_namespace(users, path='/users')
 api.add_namespace(auth, path='/auth')
 api.add_namespace(messages, path='/messages')
+api.add_namespace(report, path='/report')
 
 # File Upload
 if (app.config['ENV'] == 'development'):

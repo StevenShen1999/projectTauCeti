@@ -17,3 +17,10 @@ courseNotesDetails.add_argument('courseID', required=True, help="CourseID of the
 notesVoterDetails = api.parser()
 notesVoterDetails.add_argument('noteID', required=True, help="uuid of the corresponding note", location="args")
 notesVoterDetails.add_argument('vote', required=True, help="+integer or -integer for an upvote or downvote", location="args")
+
+notesReportDetails = api.model("For reporting a particular note",
+    {
+        "noteID": fields.String(required=True, example="226c96f19ef74de4b69f7184d087816f"),
+        "reason": fields.String(required=True, example="This note contains porn")
+    }
+)

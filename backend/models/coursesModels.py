@@ -23,3 +23,10 @@ coursePatchDetails = api.model("For APIs to update information about a course",
         "information": fields.String(required=False, example="Alternative description (NOT REQUIRED IN THE REQUEST)")
     }
 )
+
+courseReportDetails = api.model("For reporting a particular course",
+    {
+        "courseID": fields.String(required=True, example="5322c71754014f469ffc7f536978630d"),
+        "reason": fields.String(required=True, example="Course has been deprecated, please remove")
+    }
+)

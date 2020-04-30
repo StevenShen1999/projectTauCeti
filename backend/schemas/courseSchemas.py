@@ -22,3 +22,7 @@ class CoursePatchSchema(Schema):
     id = gs.generalString
     name = gs.generalerNotRequiredString
     information = gs.generalerNotRequiredString
+
+class CourseReportSchema(Schema):
+    courseID = gs.generalString
+    reason = gs.generalString

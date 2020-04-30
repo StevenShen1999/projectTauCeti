@@ -10,6 +10,7 @@ from schemas.userSchemas import *
 from util.authServices import validateToken
 from flask import jsonify, request
 from util.fileServices import uploadImages
+from util.emailServices import sendReportEmail
 
 @api.route("/<string:userID>")
 class UserBaseAPI(Resource):
