@@ -3,11 +3,13 @@ import string
 
 # THis is used for more sensitive fields
 generalString = fields.String(required=True, allow_none=False, 
-    validate=validate.Regexp("^[a-zA-Z0-9 ,-_]+$", 
+    validate=validate.Regexp("^[a-zA-Z0-9 ,-_\(\)]+$", 
     error="Special Characters Not Allowed"))
 
 # More general-er version of a string
 generalerString = fields.String(required=True, allow_none=False)
+
+generalerNotRequiredString = fields.String(required=False, allow_none=True)
 
 generalInteger = fields.Integer(required=True, allow_none=False, error="That's not an integer")
 

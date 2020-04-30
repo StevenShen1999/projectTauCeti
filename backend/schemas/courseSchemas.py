@@ -7,11 +7,13 @@ class CourseRegistrationSchema(Schema):
     code = gs.course
     name = gs.generalString
     university = gs.generalString
+    information = gs.generalerNotRequiredString
 
     @post_load
     def makeCourse(self, data, **kwargs):
-        return Courses(id=str(uuid4().hex), code=data['code'], name=data['name'],
-            university=data['university'])
+        return Courses(id=str(uuid4().hex), code=data['code'],
+            name=data['name'], university=data['university'],
+            information=data['information'] if 'information' in data else None)
 
 class CourseSchema(Schema):
     id = gs.generalString

@@ -8,6 +8,7 @@ class Courses(db.Model):
     code = db.Column(db.String(8), nullable=False)
     name = db.Column(db.Text, nullable=False)
     #semester = db.Column(db.String(4), nullable=False)
+    information = db.Column(db.Text, nullable=True)
     university = db.Column(db.Text, nullable=False)
 
     _notes = db.relationship("Notes", uselist=False, back_populates="_course")
