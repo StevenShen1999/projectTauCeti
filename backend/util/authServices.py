@@ -112,6 +112,7 @@ def loginUser(user, data):
             'exp': datetime.utcnow() + timedelta(seconds=tokenExp),
             'id': user.id,
             'email': user.email,
+            'permission': user.role,
             'type': 'standard'
         },
         jwtKey, algorithm='HS256'

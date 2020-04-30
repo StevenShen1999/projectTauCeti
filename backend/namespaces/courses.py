@@ -9,6 +9,7 @@ from models.coursesModels import *
 from schemas.courseSchemas import *
 from util.authServices import validateToken
 from flask import jsonify
+from util.emailServices import sendRequestEmail
 
 @api.route("/")
 class EventRegister(Resource):
@@ -37,7 +38,7 @@ class EventRegister(Resource):
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
         description="Use this API to delete a course that already exists")
     @validate_with(CourseSchema)
-    @validateToken()
+    @validateToken(roleRequired=1)
     def delete(self, token_data, data):
         exists = Courses.query.filter_by(id=data['id']).first()
         if not exists: abort(409, "Course with this courseID doesn't exist")
@@ -46,6 +47,60 @@ class EventRegister(Resource):
         db.session.commit()
 
         return jsonify({"message": "Success"})
+
+@api.route("/update")
+class UpdateCourse(Resource):
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.expect(coursePatchDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="User this API (requires an admin account) to issue an update to the courses")
+    @validate_with(CoursePatchSchema)
+    @validateToken(roleRequired=1)
+    def patch(self, token_data, data):
+        course = Courses.query.filter_by(id=data['id']).first()
+        if not course: abort(403, "Invalid courseID (doesn't exist)")
+
+        if 'name' in data:
+            course.name = data['name']
+        if 'information' in data:
+            course.information = data['information']
+
+        db.session.add(course)
+        db.session.commit()
+        return jsonify({"message": "Success"})
+
+    # To update information about a course, we send this package to admin accounts 
+    # and process request from an alternative route
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.response(500, "Mail services not working, check settings and log and try again later.")
+    @api.expect(coursePatchDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="Use this API to request an update to a course's information (only for admins)\
+        Note this API accepts a new name and/or information to update the course (with the courseID)\
+        with, only one is required, don't include the other one in the request if they are not being updated")
+    @validate_with(CoursePatchSchema)
+    @validateToken()
+    def post(self, token_data, data):
+        course = Courses.query.filter_by(id=data['id']).first()
+        if not course: abort(403, "Invalid courseID (doesn't exist)")
+
+        payload = [] # Convert the payload here to comply with the requestEmail format
+        if 'name' in data:
+            payload.append(f"oldName: {course.name}\nnewName: {data['name']}\n")
+        if 'information' in data:
+            payload.append(f"oldDescription: {course.information}\nnewDescription: {data['information']}\n")
+        if not payload:
+            return jsonify({"message": 'Success', "payload": "Nothing Requested"})
+        payload = ''.join(payload)
+
+        emailStatus = sendRequestEmail('course', course.id, payload, token_data['email'], course.name)
+        if emailStatus != "success": abort(500, "Mail services not working, check settings and log and try again later.")
+
+        return jsonify({"message": "Success", "payload": "Request filed, please check back in 24 hours"})
 
 @api.route("/<string:courseID>")
 class GetCourse(Resource):

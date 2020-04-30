@@ -17,3 +17,8 @@ class CourseRegistrationSchema(Schema):
 
 class CourseSchema(Schema):
     id = gs.generalString
+
+class CoursePatchSchema(Schema):
+    id = gs.generalString
+    name = gs.generalerNotRequiredString
+    information = gs.generalerNotRequiredString

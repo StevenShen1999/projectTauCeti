@@ -15,3 +15,11 @@ courseDetails = api.model("For APIs requiring to get information about a course"
         "id": fields.String(required=True, example="54e80ff91ae94f62ac3033c01b41b852")
     }
 )
+
+coursePatchDetails = api.model("For APIs to update information about a course",
+    {
+        "id": fields.String(required=True, example="54e80ff91ae94f62ac3033c01b41b852"),
+        "name": fields.String(required=False, example="Alternative Introduction To Computing A (NOT REQUIRED IN THE REQUEST)"),
+        "information": fields.String(required=False, example="Alternative description (NOT REQUIRED IN THE REQUEST)")
+    }
+)
