@@ -17,6 +17,7 @@ class Users(db.Model):
     verificationcode = db.Column(db.Text, nullable=True)
     failedlogins = db.Column(db.Integer, nullable=False)
     lockeduntil = db.Column(db.DateTime(timezone=True), nullable=True)
+    profileimage = db.Column(db.Text, nullable=True)
     # Need a section here for the referred by person
 
     _notes = db.relationship("Notes", uselist=False, back_populates="_uploader")

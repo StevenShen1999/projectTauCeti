@@ -1,5 +1,5 @@
 from flask_restplus import Resource, abort, Namespace
-from util.validationServices import validate_with
+from util.validationServices import validate_with, validate_with_form
 
 api = Namespace("auth", description="APIs to handle authentication related queries")
 
@@ -8,13 +8,14 @@ from app import db
 from models.authModels import *
 from schemas.authSchemas import *
 from util.authServices import registerUser, validateToken, loginUser, generateVerification, verifyUser
-from flask import jsonify
+from flask import jsonify, request
 from hashlib import sha256
 from datetime import datetime, timedelta
+from util.fileServices import uploadImages
 
 @api.route("/register")
 class Register(Resource):
-    @api.response(200, "Sucess")
+    @api.response(200, "Success")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Credentials (Email or Username Taken)")
     @api.response(409, "Account with this email address already exists")
@@ -24,14 +25,20 @@ class Register(Resource):
         Registering an account with the given parametre, note: password must be longer than 8 characters,
         contains an upper case character, a lower case character and also a special character
     ''')
-    @validate_with(RegistrationSchema)
+    @validate_with_form(RegistrationSchema)
     def post(self, data):
         exists = Users.query.filter_by(email=data.email).first()
         if exists: abort(409, "Account with this email address already exists")
 
+        if request.files:
+            uploadStatus = uploadImages(request.files['profilePicture'])
+            if not (isinstance(uploadStatus, tuple)): abort(403, uploadStatus)
+            data.profileimage = uploadStatus[0]
+
         db.session.add(data)
         db.session.commit()
 
+        # This generates a token
         status = registerUser(data)
 
         if status != "success":

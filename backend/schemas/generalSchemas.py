@@ -13,7 +13,7 @@ generalerNotRequiredString = fields.String(required=False, allow_none=True)
 
 generalInteger = fields.Integer(required=True, allow_none=False, error="That's not an integer")
 
-generalTimeStamp = fields.DateTime(required=True, allow_none=False, error="Not a valid ISO timecode, try again")
+generalTimeStamp = fields.AwareDateTime(format="iso8601", default_timezone="utc", required=True, allow_none=False, error="Not a valid ISO timecode, try again")
 
 email = fields.Email(required=True, allow_none=False)
 
