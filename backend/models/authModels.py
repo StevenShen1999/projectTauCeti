@@ -37,3 +37,10 @@ verifyDetails = api.model("For verifying accounts",
         "verification": fields.String(required=True, example="833123")
     }
 )
+
+changePasswordDetails = api.model("For changing a user's password",
+    {
+        "oldPassword": fields.String(required=True, example="Abcd1234@"),
+        "newPassword": fields.String(required=True, example="Aedf4321@")
+    }
+)

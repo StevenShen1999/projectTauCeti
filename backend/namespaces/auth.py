@@ -7,11 +7,12 @@ from models.users import Users
 from app import db
 from models.authModels import *
 from schemas.authSchemas import *
-from util.authServices import registerUser, validateToken, loginUser, generateVerification, verifyUser
+from util.authServices import registerUser, validateToken, loginUser, generateVerification, verifyUser, changePassword
 from flask import jsonify, request
 from hashlib import sha256
 from datetime import datetime, timedelta
 from util.fileServices import uploadImages
+import hashlib
 
 @api.route("/register")
 class Register(Resource):
@@ -74,7 +75,7 @@ class Login(Resource):
     @api.response(200, "{'message': 'success', 'token': 'someJWTString'}")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Credentials (Wrong Email or Password)")
-    @api.response(405, "This account isn't activated, please activate your account")
+    @api.response(406, "This account isn't activated, please activate your account")
     @api.response(412, "Account locked, please try again in 24 hours")
     @api.response(423, "More than 31 days since last login, a verification code sent to email, require that to verify")
     @api.response(500, "Email service not currently avaliable, sending email not successful")
@@ -129,6 +130,25 @@ class Lost(Resource):
         if emailStatus != "success": abort(500, "Email service not currently avaliable, sending email not successful")
 
         return jsonify({"message": "Success"})
+
+
+@api.route("/change")
+class ChangePassword(Resource):
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Credentials (Wrong Email or Password)")
+    @api.expect(changePasswordDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="For changing a tokenbearer's password")
+    @validate_with(ChangePasswordSchema)
+    @validateToken()
+    def patch(self, token_data, data):
+        user = Users.query.filter_by(id=token_data['id']).first()
+
+        changePassword(user, data['oldPassword'], data['newPassword'])
+
+        return jsonify({"message": "Success"})
+
 
 # Stub API
 """

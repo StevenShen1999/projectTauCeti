@@ -33,3 +33,7 @@ class VerificationSchema(Schema):
 
 class TokenSchema(Schema):
     token = gs.token
+
+class ChangePasswordSchema(Schema):
+    oldPassword = gs.password
+    newPassword = gs.password

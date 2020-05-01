@@ -9,6 +9,7 @@ from models.users import Users
 from random import Random
 import string
 from app import db
+from hashlib import sha256
 
 ### Expiration Time For Tokens is 24 Hours
 tokenExp = 24*60*60
@@ -86,7 +87,7 @@ def loginUser(user, data):
             status = generateVerification(user)
             if status != "success": abort(500, "Email service not currently avaliable, sending email not successful")
             else: abort(423, "More than 31 days since last login, a verification code sent to email, use that to verify at POST /auth/verify")
-    elif user.password != sha256(data['password'].encode('UTF-8')).hexdigest():
+    if user.password != sha256(data['password'].encode('UTF-8')).hexdigest():
         if (user.failedlogins >= 5):
             user.lockeduntil = datetime.utcnow() + timedelta(days=1)
             db.session.add(user)
@@ -97,7 +98,7 @@ def loginUser(user, data):
         db.session.commit()
         abort(403, "Invalid Credentials (Wrong Email or Password)")
     elif user.activated == False:
-        abort(405, "This account isn't activated, please activate your account")
+        abort(406, "This account isn't activated, please activate your account")
     elif user.lockeduntil:
         if user.lockeduntil > datetime.utcnow(): abort(412, "Account locked, please try again in 24 hours")
         else: user.lockeduntil = None
@@ -149,3 +150,19 @@ def generateVerification(user):
     status = sendVerificationEmail(code, user.email)
 
     return "success" if status == "success" else status
+
+
+def changePassword(user, oldPassword, newPassword):
+    oldPassword = sha256(oldPassword.encode('UTF-8')).hexdigest()
+    newPassword = sha256(newPassword.encode('UTF-8')).hexdigest()
+    print(newPassword)
+
+    if user.password != oldPassword:
+        abort(403, "Invalid Credentials (Wrong password inputted, please try again.)")
+
+    user.password = newPassword
+
+    db.session.add(user)
+    db.session.commit()
+
+    return
