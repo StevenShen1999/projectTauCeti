@@ -1,6 +1,9 @@
 import os
 import sys
 
+if len(sys.argv) < 2:
+    print("Usage: python3 addCourseListToDB.py [localPostgresPassword]")
+    exit()
 os.environ['SQLPassword'] = sys.argv[1]
 
 
@@ -28,3 +31,9 @@ for i in courseString:
     db.session.add(course)
 
 db.session.commit()
+
+print('''
+||||||||||||||||||||||||||||||||||||||
+||||||||| All courses added ||||||||||
+||||||||||||||||||||||||||||||||||||||
+''')

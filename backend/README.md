@@ -20,3 +20,8 @@ psql [any local DB]
     ALTER USER postgres WITH PASSWORD 'somePassword';
 ```
 Note that `postgres` is the default postgresql account
+
+## To populate the database with all the courses from UNSW
+```
+python3 addCourseListToDB.py [password for your local postgres account]
+```
