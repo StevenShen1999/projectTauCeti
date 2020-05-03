@@ -1,12 +1,15 @@
 from flask_restplus import Resource, abort, Namespace
-from util.validationServices import validate_with
+from util.validationServices import validate_with, validate_with_args
 
 api = Namespace("courses", description="APIs to handle courses related queries")
 
 from models.courses import Courses
+from models.notes import Notes
 from app import db
 from models.coursesModels import *
 from schemas.courseSchemas import *
+from models.notesModels import courseNotesDetails
+from schemas.noteSchemas import courseNoteSchema
 from util.authServices import validateToken
 from flask import jsonify
 from util.emailServices import sendRequestEmail
@@ -47,6 +50,32 @@ class EventRegister(Resource):
         db.session.commit()
 
         return jsonify({"message": "Success"})
+
+    @api.response(200, '''{'message': 'Success',\
+         'payload': {'id': '', 'code': '', 'name': '', 'information': '', \
+             'university': '', 'createdBy': '', 'notes': [{'id': 'skdfh', 'name': \
+                 'A note that i uploaded', 'points': 123, 'price': 123, 'uploadTime': \
+                     '2020-03-01 12:12:31', 'path': '/assets/images/', 'courseID': 'asdfkh', \
+                     'uploaderID': 'askdjfh'}, {...}]}''')
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.expect(courseNotesDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
+        description="Use this API to get all notes attached to a specific courseID")
+    @validate_with_args(courseNoteSchema)
+    @validateToken()
+    def get(self, token_data, data):
+        course = Courses.query.filter_by(id=data['courseID']).first()
+        if not course:
+            abort(403, "Invalid Parametres (Invalid courseID)")
+        payload = course.jsonifyObject()
+        payload['notes'] = []
+
+        exists = Notes.query.filter_by(courseid=data['courseID']).all()
+        for i in exists:
+            payload['notes'].append(i.jsonifyObject())
+        return jsonify({"message": "Success", "payload": payload})
+
 
 @api.route("/update")
 class UpdateCourse(Resource):
@@ -101,9 +130,3 @@ class UpdateCourse(Resource):
         if emailStatus != "success": abort(500, "Mail services not working, check settings and log and try again later.")
 
         return jsonify({"message": "Success", "payload": "Request filed, please check back in 24 hours"})
-
-@api.route("/<string:courseID>")
-class GetCourse(Resource):
-    @api.doc(description="Stub API, not yet implemented")
-    def get(self):
-        return 0

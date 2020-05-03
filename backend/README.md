@@ -12,12 +12,12 @@ python3 run.py [password for your local postgres account] [secret key for JWTs]
 * If you don't know what your postgres account is, you could always do
 ```
 psql [any local DB]
-    \du
+$ \du
 ```
 * If you don't know what your postgres password is, you could always do
 ```
 psql [any local DB]
-    ALTER USER postgres WITH PASSWORD 'somePassword';
+$ ALTER USER postgres WITH PASSWORD 'somePassword';
 ```
 Note that `postgres` is the default postgresql account
 

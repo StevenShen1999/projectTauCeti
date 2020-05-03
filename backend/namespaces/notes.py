@@ -34,8 +34,12 @@ class notesBaseAPI(Resource):
         if not isinstance(uploadStatus, tuple): abort(403, uploadStatus)
         data.path = uploadStatus[0]
 
-        db.session.add(data)
-        db.session.commit()
+        try:
+            db.session.add(data)
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            abort(403, "Invalid Parametres (most likely the courseID is not valid)")
 
         return jsonify({'message': 'Success', 'noteID': data.id})
 
@@ -106,27 +110,7 @@ class NoteVoter(Resource):
         return jsonify({"message": "Success"})
 
     # For admins to delete bogus votes
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
+        description="Use this API to delete the votes for a note (STUB API, NOT IMPLEMENTED)")
     def delete(self, token_data, data):
         return "Success"
-
-
-@api.route("/course", endpoint='course')
-class CourseNotes(Resource):
-    @api.response(200, '''{'message': 'Success',\
-         'payload': [{'id': 'skdfh', 'name': 'A note that i uploaded', \
-             'points': 123, 'price': 123, 'uploadTime': '2020-03-01 12:12:31', \
-                 'path': '/assets/images/', 'courseID': 'asdfkh', \
-                     'uploaderID': 'askdjfh'}, {...}]}''')
-    @api.response(400, "Missing Parametres")
-    @api.response(403, "Invalid Parametres")
-    @api.expect(courseNotesDetails)
-    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
-        description="Use this API to get all notes attached to a specific courseID")
-    @validate_with_args(courseNoteSchema)
-    @validateToken()
-    def get(self, token_data, data):
-        exists = Notes.query.filter_by(courseid=data['courseID']).all()
-        payload = []
-        for i in exists:
-            payload.append(i.jsonifyObject())
-        return jsonify({"message": "Success", "payload": payload})

@@ -26,7 +26,7 @@ for i in courseString:
         i = i.replace(char, "")
     stringToList = i.split(' - ')
     courseCode, courseName = stringToList[0], stringToList[1]
-    course = Courses(id=str(uuid4().hex), code=courseCode, name=courseName,
+    course = Courses(id=str(uuid4().hex), code=courseCode, name=courseName[:-1],
         university="University of New South Wales")
     db.session.add(course)
 

@@ -17,3 +17,14 @@ class Courses(db.Model):
 
     _messages = db.relationship("Messages", uselist=False, back_populates="_course")
     # NOTE: Potentially we can have Country/State here as well
+
+    def jsonifyObject(self):
+        payload = {}
+        payload['id'] = self.id
+        payload['code'] = self.code
+        payload['name'] = self.name
+        payload['information'] = self.information
+        payload['university'] = self.university
+        payload['createdBy'] = self.createdby
+
+        return payload
