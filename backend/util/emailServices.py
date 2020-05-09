@@ -15,6 +15,7 @@ Hello,\nIt's good to have you with us. Thanks again for signing up with tauCeti.
             body=message
         )
     except Exception:
+        print(Exception)
         return str(Exception)
     return "success"
 
@@ -30,6 +31,7 @@ Hey,\nIt's been a while since we've seen you.\n\nHere's your verification code: 
             body=message
         )
     except Exception:
+        print(Exception)
         return str(Exception)
     return "success"
 
@@ -54,6 +56,7 @@ with the following changes:
             body=message
         )
     except Exception:
+        print(Exception)
         return str(Exception)
     return "success"
 

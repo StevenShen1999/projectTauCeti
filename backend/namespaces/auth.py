@@ -43,7 +43,7 @@ class Register(Resource):
         status = registerUser(data)
 
         if status != "success":
-            abort(500, "Email service not currently avaliable, sending email not successful")
+            abort(400, "Email service not currently avaliable, sending email not successful")
         return jsonify({"message": "Success"})
 
 @api.route("/activate")
