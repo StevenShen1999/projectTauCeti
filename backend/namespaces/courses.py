@@ -130,3 +130,15 @@ class UpdateCourse(Resource):
         if emailStatus != "success": abort(500, "Mail services not working, check settings and log and try again later.")
 
         return jsonify({"message": "Success", "payload": "Request filed, please check back in 24 hours"})
+
+@api.route("/all")
+class AllCourses(Resource):
+    @api.response(200, "{'message': 'Success', 'payload': '[{'id': '', 'code': '', 'name': '',\
+        'information': '', 'university': '', 'createdBy': ''}]'")
+    def get(self):
+        courses = Courses.query.all()
+        results = []
+        for i in courses:
+            results.append(i.jsonifyObject())
+
+        return jsonify({"message": "Success", "payload": results})
