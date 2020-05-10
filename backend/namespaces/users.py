@@ -57,7 +57,7 @@ class UpdateUserAccount(Resource):
     @api.response(200, "Success")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Parametres")
-    @api.expect(userUpdateImageDetails)
+    @api.expect(userUpdateDetails)
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
         description="Use this API to update the token bearer's email or username")
     @validate_with(userUpdateDetails)
