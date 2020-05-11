@@ -5,6 +5,16 @@
 * Python3 >= 3.6 (`sudo apt-get install python3` for Debian-based distros)
 * All dependencies listed in [`requirements.txt`](requirements.txt) installed (`pip3 install -r requirements.txt`)
 
+## Before starting Flask
+* Start the Postgres Server
+```
+sudo service postgresql start
+```
+* If running this project for the first time
+```
+createdb tauCetiDB
+```
+
 ## To run the Flask server
 ```
 python3 run.py [password for your local postgres account] [secret key for JWTs]
