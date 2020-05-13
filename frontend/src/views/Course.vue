@@ -1,66 +1,56 @@
 <template>
-    <div class="course-wrapper"> 
-    <NavBar/>
-    <div class="course-container">
-        <div class="main">
-            <div class="files"><CourseHome /></div>   
-            <div class="chat"><Chat /> </div>   
-        </div>
-    </div>
-    </div>
+    <v-app>
+        <CourseChat />
+        <CourseMenu v-model="model" :items="items"/>
+        <v-content> 
+        <v-fade-transition
+        hide-on-leave
+        >
+        <CourseHome v-if="model == 0"/>
+        </v-fade-transition>
+        <CourseOutline  v-if="model == 1"/>
+        <CourseNotes  v-else-if="model == 2"/>
+        </v-content>
+    </v-app>
+
+                
+
+            
+
+    
 </template>
 <script>
-import NavBar from '@/components/NavBar.vue'
-import CourseHome from '@/components/CourseHome.vue'
-import Chat from '@/components/Chat.vue'
+import CourseChat from '@/components/Course/CourseChat.vue'
+import CourseMenu from '@/components/Course/CourseMenu.vue'
+import CourseOutline from '@/components/Course/CourseOutline.vue'
+import CourseNotes from '@/components/Course/CourseNotes.vue'
+import CourseHome from '@/components/Course/CourseHome.vue'
 export default {
-    name: "course",
-    props: ["cid"],
-    components: {NavBar,CourseHome, Chat}
+    name: "Course",
+    components: {
+        CourseChat, CourseOutline, CourseMenu, CourseNotes, CourseHome
+    },
+    data: () => {
+        return {
+        items: [
+            {
+            icon: 'home',
+            title: 'Home'
+            },
+            {
+            icon: 'info',
+            title: 'Course Information'
+            },
+            {
+            icon: 'list',
+            title: 'Notes'
+            },
+        ],
+        model:  0
+        }
+    }
 }
 </script>
-<style lang='scss' scoped>
-.course-wrapper {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-items: stretch;
-}
-.course-container {
-    position: relative;
-    height: 100%;
-    display: flex;
-}
-.left {
-    flex-grow: 0;
-    min-height: 100%;
-    background-color: #FAFFD1;
-    width: 50px;
-    position: relative;
-}
-.main {
-    height: 100%;
-    width: 100%;
-    position: relative;
-    display: flex; 
-}
-.files {
-    overflow: scroll;
-    overflow-x: hidden;
-    height: 100%;
-    flex: 4 1 0;
-    position: relative;
-    background-color: white;
-}
-.chat {
-    overflow: scroll;
-    overflow-x: hidden;
-    flex: 2 1 0;
-    height: 100%;
-    position: relative;
-    background-color: #E8E4B3;
-}
+<style lang="scss" >
 
 </style>

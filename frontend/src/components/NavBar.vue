@@ -1,42 +1,91 @@
 <template>
-<div class="wrapper">
-    <div class="logo">
-        <router-link to="/"><h1>Dark Notes</h1></router-link>
-    </div>
-    <div class="search">
-        <input type="text" name="search" />
-    </div>
-    <div class="user">
-        <div v-if="login">
-        <router-link to="/logout" class="fas fa-user"></router-link>
-        </div>
-        <div class="login" v-else>
-            <router-link class="primary" to="/login">Log in</router-link>
-        </div>
-    </div>
-    
-</div>
-    
+    <v-app-bar
+      clipped-left
+      clipped-right
+      app
+    >
+      <!-- <v-app-bar-nav-icon
+        v-if="primaryDrawer.type !== 'permanent'"
+        @click.stop="primaryDrawer.model = !primaryDrawer.model"
+      /> -->
+<!-- 
+          v-model="select"
+          :loading="loading"
+          :items="items"
+          :search-input.sync="search" -->
+
+      <v-toolbar-title >
+        <router-link to="/"><h1 class="logo">Dark Notes</h1></router-link></v-toolbar-title>
+          <v-autocomplete
+          cache-items
+          v-model="courseID"
+          :items="courseList"
+          item-text="name"
+          item-value="code"
+          :search-input.sync="search"
+          :loading="isLoading"
+          class="mx-4"
+          hide-no-data
+          hide-details
+          label="Search courses"
+          solo-inverted
+        ></v-autocomplete>
+        <v-btn large color="primary" text>About</v-btn>
+        <v-btn large class="ml-2" v-if="!isLoggedIn" to="/login" color="primary">Login</v-btn>
+        <v-btn large class="ml-2" v-else @click="logout" color="primary">Logout</v-btn>
+    </v-app-bar>
 </template>
-<style lang="scss" scoped>
-.wrapper {
-    height: 90px;
-    background-color: white;
-    display: flex;
-    justify-content: space-between;
-    align-content: center;
+<script>
+import axios from 'axios'
+export default {
+    name: "NavBar",
+    data() {
+      return {
+        courseList: [],
+        isLoading: false,
+        search: null,
+        courseID: null
+      }
+    },
+    computed: {
+      isLoggedIn() { return this.$store.getters['auth/isLoggedIn'] }
+    },
+    methods: {
+      logout() { return this.$store.dispatch('auth/logout')},
+    },
+    watch: {
+      courseID(v) { this.$router.push(`/c/${v}`) },
+      search() {
+        if (this.courseList.length > 0) return
+        if (this.isLoading) return
+        this.isLoading = true
+
+        axios.get('/courses/all')
+        .then(r => {
+          this.courseList = r.data.payload.map(e => {
+            e.name = `${e.code} - ${e.name}`
+            return e
+          })
+          this.isLoading = false
+          console.log(this.courseList) //eslint-disable-line
+        })
+      }
+    }
+
 }
+</script>
+<style lang="scss">
 .logo {
-    margin-left: 20px;
-  & h1 {
-    color: #f35626;
-    font-size: 2rem;
-    background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: hue 60s infinite linear; 
-  }
+  color: #f35626;
+  font-size: 2rem;
+  background-image: linear-gradient(92deg, #f35626 0%,#feab3a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: hue 60s infinite linear; 
+}
+.logo:hover {
+  animation: hue 2s infinite linear; 
 }
 @keyframes hue {
   0% {
@@ -47,46 +96,7 @@
   }
   
 }
-.search {
-    margin: auto 0;
-    width: 40%;
-    max-width: 500px;
-    & input {
-
-        border-radius: 30px;
-        background-color: #eee;
-        border: none;
-        padding: 12px 15px;
-        margin: 8px 0;
-        width: 100%;
-        width: 100%;
-    }
+a {
+  text-decoration: none;
 }
-.user {
-    font-size: 2rem;
-    margin: auto 10px;
-}
-.login {
-    display: flex;
-    & .primary {
-        color: black;
-        margin-left: 5px;
-        font-size: 0.6em;
-        padding: 2px 10px;
-    }
-    & .secondary {
-        color: black;
-        margin-left: 5px;
-        font-size: 0.6em;
-        padding: 2px 10px;
-    }
-}
-
 </style>
-<script>
-export default {
-    data: () => ({
-        login: false 
-    })
-}
-</script>
