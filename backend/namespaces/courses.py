@@ -65,7 +65,8 @@ class EventRegister(Resource):
     @validate_with_args(courseNoteSchema)
     @validateToken()
     def get(self, token_data, data):
-        course = Courses.query.filter_by(id=data['courseID']).first()
+        course = Courses.query.filter_by(code=data['courseID']).first()
+        print(data['courseID'])
         if not course:
             abort(403, "Invalid Parametres (Invalid courseID)")
         payload = course.jsonifyObject()
