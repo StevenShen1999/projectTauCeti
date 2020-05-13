@@ -135,6 +135,7 @@ class UpdateCourse(Resource):
 class AllCourses(Resource):
     @api.response(200, "{'message': 'Success', 'payload': '[{'id': '', 'code': '', 'name': '',\
         'information': '', 'university': '', 'createdBy': ''}]'")
+    @api.doc(description="Use this API to get a list of all the courses avaliable")
     def get(self):
         courses = Courses.query.all()
         results = []
