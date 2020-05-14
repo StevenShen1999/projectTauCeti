@@ -3,9 +3,7 @@ import os
 class Configuration(object):
     # General
     ENV = "development"
-
     TAUCETI_SECRET_KEY = os.environ.get('TAUCETI_SECRET_KEY')
-    FLASK_DEBUG = True
 
     # Database
     SQLALCHEMY_ECHO = True

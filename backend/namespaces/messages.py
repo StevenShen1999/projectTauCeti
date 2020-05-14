@@ -6,6 +6,7 @@ api = Namespace("messages", description="APIs to handle messages related queries
 
 from models.messages import Messages
 from models.courses import Courses
+from models.users import Users
 from app import db
 from models.messagesModel import *
 from schemas.messageSchemas import *
@@ -52,10 +53,16 @@ class GetCourseMessages(Resource):
         if not Courses.query.filter_by(id=data['courseID']).first():
             abort(403, "Not a valid courseID")
 
-        allMessages = Messages.query.filter(Messages.courseid==data['courseID'],
-            Messages.time>=data['previousIncrement']).order_by(asc(Messages.time)).all()
+        allMessages = Messages.query.join(Users, Users.id==Messages.senderid).\
+            add_columns(Users.username).filter(Messages.courseid==data['courseID'], \
+                Messages.time>=data['previousIncrement']).order_by(asc(Messages.time)).all()
+
+        #allMessagesJoined = allMessages.join(Users).filter(Users.id==Messages.senderid).all()
+        #print(allMessagesJoined)
         payload = []
-        for message in allMessages:
-            payload.append(message.jsonifyObject())
+        for i in allMessages:
+            payload.append(i[0].jsonifyObject())
+            payload[-1].pop('senderID')
+            payload[-1]['username'] = i[1]
 
         return jsonify({"message": "Success", "messages": payload})
