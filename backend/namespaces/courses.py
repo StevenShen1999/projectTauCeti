@@ -5,6 +5,7 @@ api = Namespace("courses", description="APIs to handle courses related queries")
 
 from models.courses import Courses
 from models.notes import Notes
+from models.changes import Changes
 from app import db
 from models.coursesModels import *
 from schemas.courseSchemas import *
@@ -13,9 +14,13 @@ from schemas.noteSchemas import courseNoteSchema
 from util.authServices import validateToken
 from flask import jsonify
 from util.emailServices import sendRequestEmail
+from uuid import uuid4
+import difflib
+from datetime import datetime
+from sqlalchemy import desc
 
 @api.route("/")
-class EventRegister(Resource):
+class CourseGeneral(Resource):
     @api.response(200, "{'message': 'Success', 'courseID': '5322c71754014f469ffc7f536978630d'}")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Parametres")
@@ -27,7 +32,8 @@ class EventRegister(Resource):
     @validateToken()
     def post(self, token_data, data):
         exists = Courses.query.filter_by(code=data.code, university=data.university).first()
-        if exists: abort(409, "Course with this course code at this semester already exists")
+        if exists: abort(409, "Course with this course code at this university already exists")
+        data.createdby = token_data['id']
 
         db.session.add(data)
         db.session.commit()
@@ -39,7 +45,7 @@ class EventRegister(Resource):
     @api.response(403, "Invalid Parametres")
     @api.expect(courseDetails)
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
-        description="Use this API to delete a course that already exists")
+        description="Use this API to delete a course that already exists (ADMIN ONLY)")
     @validate_with(CourseSchema)
     @validateToken(roleRequired=1)
     def delete(self, token_data, data):
@@ -87,16 +93,27 @@ class UpdateCourse(Resource):
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
         description="User this API (requires an admin account) to issue an update to the courses")
     @validate_with(CoursePatchSchema)
-    @validateToken(roleRequired=1)
+    @validateToken()
     def patch(self, token_data, data):
         course = Courses.query.filter_by(id=data['id']).first()
         if not course: abort(403, "Invalid courseID (doesn't exist)")
 
+        nameDiff, informationDiff = None, None
         if 'name' in data:
+            oldName = course.name
             course.name = data['name']
+            nameDiff = makeDiff(oldName, data['name'])
         if 'information' in data:
+            oldInformation = course.information
             course.information = data['information']
+            informationDiff = makeDiff(oldInformation, data['information'])
 
+        change = Changes(id=str(uuid4().hex), time=datetime.utcnow(),
+            changerid=token_data['id'], courseid=data['id'],
+            namediff=nameDiff if nameDiff else None,
+            informationdiff=informationDiff if informationDiff else None)
+
+        db.session.add(change)
         db.session.add(course)
         db.session.commit()
         return jsonify({"message": "Success"})
@@ -132,6 +149,58 @@ class UpdateCourse(Resource):
 
         return jsonify({"message": "Success", "payload": "Request filed, please check back in 24 hours"})
 
+
+@api.route("/update/homepage")
+class UpdateCourseDesc(Resource):
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.expect(courseDescDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="Use this API to change the markdown description for the course's homepage")
+    @validate_with(CourseDescSchema)
+    @validateToken()
+    def patch(self, token_data, data):
+        course = Courses.query.filter_by(id=data['id']).first()
+        if not course: abort(403, "Invalid courseID (doesn't exist)")
+
+        if course.description == data['description']:
+            abort(403, "Invalid Parametres (new description the same as old description)")
+
+        descriptionDiff = makeDiff(course.description, data['description'])
+        change = Changes(id=str(uuid4().hex), time=datetime.utcnow(),
+        descriptiondiff=descriptionDiff, changerid=token_data['id'], courseid=data['id'])
+        course.description = data['description']
+
+        db.session.add(change)
+        db.session.add(course)
+        db.session.commit()
+        return jsonify({"message": "Success", "changeID": change.id})
+
+
+@api.route("/changelog")
+class CourseChangelog(Resource):
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.expect(courseChangelogDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="Use this API to get the changelog of a course")
+    @validate_with_args(CourseChangelogSchema)
+    @validateToken()
+    def get(self, token_data, data):
+        course = Courses.query.filter_by(id=data['id']).first()
+        if not course: abort(403, "Invalid Parametres (No such course)")
+
+        changelogs = Changes.query.filter_by(courseid=data['id']).order_by(desc(Changes.time)).all()
+
+        payload = []
+        for change in changelogs:
+            payload.append(change.jsonifyObject())
+
+        return jsonify({"message": "Success", "changes": payload})
+
+
 @api.route("/all")
 class AllCourses(Resource):
     @api.response(200, "{'message': 'Success', 'payload': '[{'id': '', 'code': '', 'name': '',\
@@ -144,3 +213,10 @@ class AllCourses(Resource):
             results.append(i.jsonifyObject())
 
         return jsonify({"message": "Success", "payload": results})
+
+def makeDiff(text1, text2):
+    lineDiff = ''
+    for line in difflib.unified_diff(text1.splitlines(), text2.splitlines()):
+        lineDiff += line
+
+    return lineDiff

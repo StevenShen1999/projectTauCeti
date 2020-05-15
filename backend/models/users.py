@@ -20,9 +20,10 @@ class Users(db.Model):
     profileimage = db.Column(db.Text, nullable=True)
     # Need a section here for the referred by person
 
-    _notes = db.relationship("Notes", uselist=False, back_populates="_uploader")
+    _notes = db.relationship("Notes", uselist=True, back_populates="_uploader")
     _courses = db.relationship("Courses", uselist=True, back_populates="_created")
     _messages = db.relationship("Messages", uselist=True, back_populates="_sender")
+    _changes = db.relationship("Changes", uselist=True, back_populates="_changer")
 
     def jsonifyObject(self):
         payload = {}

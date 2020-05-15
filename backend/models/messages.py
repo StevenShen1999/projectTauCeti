@@ -1,5 +1,4 @@
 from app import db
-from flask_sqlalchemy import sqlalchemy
 
 # For chatroom messages
 class Messages(db.Model):

@@ -1,5 +1,4 @@
 from app import db
-from flask_sqlalchemy import SQLAlchemy
 
 class Notes(db.Model):
     __tablename__ = 'notes'

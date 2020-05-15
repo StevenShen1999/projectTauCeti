@@ -57,8 +57,6 @@ class GetCourseMessages(Resource):
             add_columns(Users.username).filter(Messages.courseid==data['courseID'], \
                 Messages.time>=data['previousIncrement']).order_by(asc(Messages.time)).all()
 
-        #allMessagesJoined = allMessages.join(Users).filter(Users.id==Messages.senderid).all()
-        #print(allMessagesJoined)
         payload = []
         for i in allMessages:
             payload.append(i[0].jsonifyObject())
