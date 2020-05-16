@@ -6,6 +6,7 @@ api = Namespace("courses", description="APIs to handle courses related queries")
 from models.courses import Courses
 from models.notes import Notes
 from models.changes import Changes
+from models.follows import Follows
 from app import db
 from models.coursesModels import *
 from schemas.courseSchemas import *
@@ -162,7 +163,7 @@ class UpdateCourseDesc(Resource):
     @validateToken()
     def patch(self, token_data, data):
         course = Courses.query.filter_by(id=data['id']).first()
-        if not course: abort(403, "Invalid courseID (doesn't exist)")
+        if not course: abort(403, "Invalid Parametres (courseID doesn't exist)")
 
         if course.description == data['description']:
             abort(403, "Invalid Parametres (new description the same as old description)")
@@ -175,17 +176,20 @@ class UpdateCourseDesc(Resource):
         db.session.add(change)
         db.session.add(course)
         db.session.commit()
+
         return jsonify({"message": "Success", "changeID": change.id})
 
 
 @api.route("/changelog")
 class CourseChangelog(Resource):
-    @api.response(200, "Success")
+    @api.response(200, "{'message': 'Success', 'changes': [{'id': '', 'time': '', 'changerID': '', 'courseID': '', \
+        'nameDiff': '', 'informationDiff': '', 'descriptionDiff': ''}, ...]")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Parametres")
     @api.expect(courseChangelogDetails)
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
-        description="Use this API to get the changelog of a course")
+        description="Use this API to get the changelog of a course, note that \
+            ONLY ONE OF NAMEDIFF, INFORMATIONDIFF OR DESCRIPTIONDIFF WILL BE PRESENT FOR EACH CHANGE")
     @validate_with_args(CourseChangelogSchema)
     @validateToken()
     def get(self, token_data, data):
@@ -199,6 +203,50 @@ class CourseChangelog(Resource):
             payload.append(change.jsonifyObject())
 
         return jsonify({"message": "Success", "changes": payload})
+
+
+@api.route("/follow")
+class FollowCourse(Resource):
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.expect(courseFollowDetails)
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="Use this API for the token bearer to follow a course")
+    @validate_with(CourseSchema)
+    @validateToken()
+    def post(self, token_data, data):
+        if not Courses.query.filter_by(id=data['id']).first():
+            abort(403, "Invalid Parametres (No such course)")
+        elif Follows.query.filter_by(userid=token_data['id'], courseid=data['id']).first():
+            abort(403, "Invalid Parametres (Already following this course)")
+
+        following = Follows(userid=token_data['id'], courseid=data['id'])
+        db.session.add(following)
+        db.session.commit()
+        return jsonify({"message": "Success"})
+
+    @api.response(200, "Success")
+    @api.response(400, "Missing Parametres")
+    @api.response(403, "Invalid Parametres")
+    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
+        description="Use this API to get the courses that this user is following")
+    @validateToken()
+    def get(self, token_data):
+        allFollows = Follows.query.join(Courses, Courses.id==Follows.courseid).\
+            add_columns(Courses.code, Courses.name, Courses.university).\
+                filter(Follows.userid==token_data['id']).all()
+        if not allFollows: return jsonify({"message": "Success", "payload": []})
+
+        payload = []
+        for i in allFollows:
+            currPayload = {}
+            currPayload['courseCode'] = i[1]
+            currPayload['courseName'] = i[2]
+            currPayload['courseUni'] = i[3]
+            payload.append(currPayload)
+
+        return jsonify({"message": "Success", "payload": payload})
 
 
 @api.route("/all")

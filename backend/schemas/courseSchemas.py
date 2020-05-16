@@ -2,7 +2,6 @@ import schemas.generalSchemas as gs
 from marshmallow import Schema, post_load
 from uuid import uuid4
 from models.courses import Courses
-from models.changes import Changes
 from datetime import datetime
 
 class CourseRegistrationSchema(Schema):

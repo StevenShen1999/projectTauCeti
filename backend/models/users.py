@@ -24,6 +24,7 @@ class Users(db.Model):
     _courses = db.relationship("Courses", uselist=True, back_populates="_created")
     _messages = db.relationship("Messages", uselist=True, back_populates="_sender")
     _changes = db.relationship("Changes", uselist=True, back_populates="_changer")
+    _follows = db.relationship("Follows", uselist=True, back_populates="_follower")
 
     def jsonifyObject(self):
         payload = {}

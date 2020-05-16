@@ -18,6 +18,7 @@ class Courses(db.Model):
 
     _messages = db.relationship("Messages", uselist=True, back_populates="_course")
     _changes = db.relationship("Changes", back_populates="_course")
+    _follows = db.relationship("Follows", back_populates="_course")
     # NOTE: Potentially we can have Country/State here as well
 
     def jsonifyObject(self):

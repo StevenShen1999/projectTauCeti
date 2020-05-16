@@ -45,5 +45,11 @@ courseChangelogDetails = api.model("For getting a course's changelog",
     }
 )
 
+courseFollowDetails = api.model("For following a course",
+    {
+        "id": fields.String(required=True, example="6f14ce256d224b04a482ac29025d61ef")
+    }
+)
+
 courseChangelogDetails = api.parser()
 courseChangelogDetails.add_argument('id', required=True, help="CourseID of the course you want to get the changelogs for", location="args")
