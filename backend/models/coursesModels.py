@@ -53,3 +53,7 @@ courseFollowDetails = api.model("For following a course",
 
 courseChangelogDetails = api.parser()
 courseChangelogDetails.add_argument('id', required=True, help="CourseID of the course you want to get the changelogs for", location="args")
+
+getCourseFollowDetails = api.parser()
+getCourseFollowDetails.add_argument('id', required=False, help="UserID of the follows of the person you want to checkout. NOTE:\
+    Leave this field empty if just getting the token bearer's follows", location="args")

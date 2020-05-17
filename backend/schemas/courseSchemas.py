@@ -36,3 +36,6 @@ class CourseReportSchema(Schema):
 
 class CourseChangelogSchema(Schema):
     id = gs.generalString
+
+class CourseUserSchema(Schema):
+    id = gs.generalerNotRequiredString

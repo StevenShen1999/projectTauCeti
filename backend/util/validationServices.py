@@ -38,10 +38,10 @@ def validate_with_form(schema):
         return wrapper
     return decorator
 
-def validate_with_args(schema):
+def validate_with_args(schema, nullable=False):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            if not request.args:
+            if not request.args and not nullable:
                 abort(400, "missing Parametres")
 
             try:

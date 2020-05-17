@@ -229,13 +229,16 @@ class FollowCourse(Resource):
     @api.response(200, "Success")
     @api.response(400, "Missing Parametres")
     @api.response(403, "Invalid Parametres")
+    @api.expect(getCourseFollowDetails)
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}},
         description="Use this API to get the courses that this user is following")
+    @validate_with_args(CourseUserSchema, True)
     @validateToken()
-    def get(self, token_data):
+    def get(self, token_data, data):
         allFollows = Follows.query.join(Courses, Courses.id==Follows.courseid).\
             add_columns(Courses.code, Courses.name, Courses.university).\
-                filter(Follows.userid==token_data['id']).all()
+                filter(Follows.userid==(token_data['id'] if 'id' not in data else data['id']))\
+                    .all()
         if not allFollows: return jsonify({"message": "Success", "payload": []})
 
         payload = []
