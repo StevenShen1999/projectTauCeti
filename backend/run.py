@@ -9,7 +9,7 @@ elif (not os.environ.get('TAUCETI_SECRET_KEY')):
     print("Missing environment password for JWT Secret Key")
     exit(1)
 '''
-if len(sys.argv) < 3:
+if len(sys.argv) != 3:
     print("Usage: python3 run.py [SQLPassword] [TAUCETI_SECRET_KEY]")
     exit(0)
 
