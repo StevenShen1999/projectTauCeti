@@ -38,5 +38,12 @@ class Users(db.Model):
         payload['role'] = self.role
         payload['lastloggedin'] = self.lastloggedin
 
+    def getUserInfo(self):
+        return {
+            'notes_uploaded': [note.id for note in self._notes],
+            'courses_following': [follow.courseid for follow in self._follows],
+            'changes_issued': [change.id for change in self._changes]
+        }
+
     def vote(self, value):
         self.points += value

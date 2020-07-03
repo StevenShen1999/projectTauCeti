@@ -12,19 +12,20 @@ from flask import jsonify, request
 from util.fileServices import uploadImages
 from util.emailServices import sendReportEmail
 
-'''
-@api.route("/<string:userID>")
+@api.route("/")
 class UserBaseAPI(Resource):
     @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
-        description="Use this API to update user's information. (NOT YET IMPLEMENTED).")
-    def post(self, token_data, data):
-        return "Success"
-
-    @api.doc(params={'Authorization': {'in': 'header', 'description': 'Put the JWT Token here'}}, 
         description="Use this API to get a user's information. (NOT YET IMPLEMENTED).")
-    def get(self, token_data, data):
-        return "Success"
-'''
+    @api.response(200, "Success")
+    @api.response(400, "Invalid Parameters")
+    @validateToken()
+    def get(self, token_data):
+        user = Users.query.filter_by(id=token_data['id']).first()
+
+        if not user:
+            abort(400, "Invalid Parameters (Not a valid token/id)")
+
+        return jsonify(user.getUserInfo())
 
 # Update tokenbearer's profile image
 @api.route("/update/profileImage")
