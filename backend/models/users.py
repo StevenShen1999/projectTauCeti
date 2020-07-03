@@ -26,6 +26,9 @@ class Users(db.Model):
     _changes = db.relationship("Changes", uselist=True, back_populates="_changer")
     _follows = db.relationship("Follows", uselist=True, back_populates="_follower")
 
+    university = db.Column(db.Text, db.ForeignKey('universities.id'), nullable=False)
+    _uni = db.relationship("University", back_populates="users")
+
     def jsonifyObject(self):
         payload = {}
         payload['id'] = self.id

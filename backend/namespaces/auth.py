@@ -4,6 +4,7 @@ from util.validationServices import validate_with, validate_with_form
 api = Namespace("auth", description="APIs to handle authentication related queries")
 
 from models.users import Users
+from models.unis import University
 from app import db
 from models.authModels import *
 from schemas.authSchemas import *

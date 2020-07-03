@@ -8,7 +8,6 @@ class Courses(db.Model):
     name = db.Column(db.Text, nullable=False)
     # NOTE: Information works as an overview of the course
     information = db.Column(db.Text, nullable=True)
-    university = db.Column(db.Text, nullable=False)
     # NOTE: Description works as the user-editable markdown section
     description = db.Column(db.Text, nullable=True)
 
@@ -19,6 +18,9 @@ class Courses(db.Model):
     _messages = db.relationship("Messages", uselist=True, back_populates="_course")
     _changes = db.relationship("Changes", back_populates="_course")
     _follows = db.relationship("Follows", back_populates="_course")
+
+    university = db.Column(db.Text, db.ForeignKey('universities.id'), nullable=False)
+    _uni = db.relationship("University", back_populates="courses")
     # NOTE: Potentially we can have Country/State here as well
 
     def jsonifyObject(self):
