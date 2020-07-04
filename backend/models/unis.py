@@ -8,3 +8,16 @@ class University(db.Model):
 
     users = db.relationship("Users", uselist=True, back_populates="_uni")
     courses = db.relationship("Courses", uselist=True, back_populates="_uni")
+
+    def jsonifySelf(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+        }
+
+    def getCourse(self, courseCode):
+        for course in self.courses:
+            if course.code == courseCode:
+                return course
+
+        return None

@@ -7,6 +7,7 @@ from models.courses import Courses
 from models.notes import Notes
 from models.changes import Changes
 from models.follows import Follows
+from models.users import Users
 from app import db
 from models.coursesModels import *
 from schemas.courseSchemas import *
@@ -72,14 +73,16 @@ class CourseGeneral(Resource):
     @validate_with_args(courseNoteSchema)
     @validateToken()
     def get(self, token_data, data):
-        course = Courses.query.filter_by(id=data['courseID']).first()
-        print(data['courseID'])
+        uni = Users.query.filter_by(id=token_data['id']).first().getUni()
+
+        course = uni.getCourse(data['courseCode'])
+
         if not course:
-            abort(403, "Invalid Parametres (Invalid courseID)")
+            abort(403, "Invalid Parametres (Invalid courseCode)")
         payload = course.jsonifyObject()
         payload['notes'] = []
 
-        exists = Notes.query.filter_by(courseid=data['courseID']).all()
+        exists = Notes.query.filter_by(courseid=course.id).all()
         for i in exists:
             payload['notes'].append(i.jsonifyObject())
         return jsonify({"message": "Success", "payload": payload})

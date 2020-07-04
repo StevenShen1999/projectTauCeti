@@ -22,6 +22,8 @@ registrationDetails.add_argument('password', required=True, type=str,
     location="form")
 registrationDetails.add_argument('profilePicture', required=False, type=FileStorage,
     help="User's intended profile picture to be uploaded", location="files")
+registrationDetails.add_argument('university', required=True, type=str,
+    help="User's enrolled university, required", location="form")
 
 loginDetails = api.model("Login Details",
     {

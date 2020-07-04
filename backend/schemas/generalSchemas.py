@@ -15,6 +15,9 @@ generalInteger = fields.Integer(required=True, allow_none=False, error="That's n
 
 generalTimeStamp = fields.AwareDateTime(format="iso8601", default_timezone="utc", required=True, allow_none=False, error="Not a valid ISO timecode, try again")
 
+generalID = fields.String(required=True, allow_none=False,
+    validate=[validate.Length(equal=32)], error="That's not a valid UUID")
+
 email = fields.Email(required=True, allow_none=False)
 
 username = fields.String(required=True, allow_none=False, 

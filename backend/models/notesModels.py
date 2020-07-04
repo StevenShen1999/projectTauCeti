@@ -12,7 +12,7 @@ notesDetails = api.parser()
 notesDetails.add_argument('noteID', required=True, help="uuid of the corresponding note", location="args")
 
 courseNotesDetails = api.parser()
-courseNotesDetails.add_argument('courseID', required=True, help="CourseID of the course you want the notes for", location="args")
+courseNotesDetails.add_argument('courseCode', required=True, help="CourseCode of the course you want the notes for", location="args")
 
 notesVoterDetails = api.parser()
 notesVoterDetails.add_argument('noteID', required=True, help="uuid of the corresponding note", location="args")

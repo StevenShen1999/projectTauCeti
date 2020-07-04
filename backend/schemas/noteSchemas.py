@@ -19,7 +19,7 @@ class notesGeneralSchema(Schema):
     noteID = gs.generalString
 
 class courseNoteSchema(Schema):
-    courseID = gs.generalString
+    courseCode = gs.course
 
 class noteVoterSchema(Schema):
     noteID = gs.generalString

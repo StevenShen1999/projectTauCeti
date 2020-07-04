@@ -48,5 +48,11 @@ class Users(db.Model):
             'changes_issued': [change.id for change in self._changes]
         }
 
+    def getUniID(self):
+        return self.university
+
+    def getUni(self):
+        return self._uni
+
     def vote(self, value):
         self.points += value
