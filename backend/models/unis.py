@@ -13,6 +13,8 @@ class University(db.Model):
         return {
             'id': self.id,
             'name': self.name,
+            'courses': self.getCourses()
+            'users': self.getUsers()
         }
 
     def getCourse(self, courseCode):
@@ -21,3 +23,9 @@ class University(db.Model):
                 return course
 
         return None
+
+    def getUsers(self):
+        return [user.getUserInfoSimplified for user in self.users]
+
+    def getCourses(self):
+        return [course.jsonifyObject for course in self.courses]

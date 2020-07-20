@@ -48,6 +48,13 @@ class Users(db.Model):
             'changes_issued': [change.id for change in self._changes]
         }
 
+    def getUserInfoSimplified(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email
+        }
+
     def getUniID(self):
         return self.university
 
