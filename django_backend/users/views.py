@@ -12,6 +12,4 @@ class BaseUserView(APIView):
 
     def post(self, request):
         print(loads(request.body.decode('utf-8'))['status'])
-        user = ExtendedUser()
-        user.save()
         return Response({'status': 'success'})

@@ -16,7 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+# Importing views from our apps
 from users.views import BaseUserView
+from notes.views import NotesBaseViews
+
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework import routers
 
@@ -29,4 +32,5 @@ urlpatterns = [
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
     path('admin/', admin.site.urls),
     path('auth/', BaseUserView.as_view(), name='Customised Auth Routes'),
+    path('notes/', NotesBaseViews.as_view(), name='Notes related APIs'),
 ]
